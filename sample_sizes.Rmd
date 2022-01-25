@@ -38,7 +38,7 @@ du %<>% filter(!grepl("discarded|stats",file_name))
 
 Calculate total size per sample (R1,R2 and singletons)
 ```{r}
-sample_sizes <- du %>% group_by(sample_id) %>% summarise(total_kb=sum(space_kb))
+sample_sizes <- du %>% group_by(sample_id) %>% summarise(total_kb=sum(space_kb),nr_files=n())
 #convert to GB
 sample_sizes %<>% mutate(total_gb=total_kb/1000000) %>% select(!total_kb)
 ```
@@ -54,6 +54,7 @@ sample_sizes %>% arrange(desc(total_gb)) %>% head(n=10)
 ```
 A list of some small ones to sample
 ```{r}
-sample_sizes %>% arrange(total_gb) %>% head(n=5)
+sample_sizes %>% arrange(total_gb) %>% head(n=6)
 ```
 
+The first sample has no R2 reads available! Something wrong here.
