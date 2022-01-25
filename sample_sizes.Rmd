@@ -1,0 +1,59 @@
+---
+title: "Overview of sample sizes"
+author: "Lisa"
+date: "25/01/2022"
+output: html_document
+---
+
+```{r, include=FALSE}
+packages <- c("dplyr","magrittr","ggplot2")
+for (package in packages){
+  if (!require(package, character.only = TRUE)) install.packages(package)
+  require(package, character.only = TRUE)
+}
+```
+
+```{r, include=FALSE}
+theme_set(theme_bw())
+```
+
+Import disk usage data
+```{r}
+du <- read.delim("du_reads.txt", header = FALSE)
+names(du) <- c("space_kb","file_name")
+#remove ./ before file name
+du %<>% mutate(file_name=sub("./","",file_name,fixed = TRUE))
+```
+
+Extract sample ID
+```{r}
+du %<>% mutate(sample_id=sub(".*MG_","",file_name))
+du %<>% mutate(sample_id=sub("_S..?_L001.*","",sample_id))
+```
+
+We will not be using the discarded reads and the stats files, remove them
+```{r}
+du %<>% filter(!grepl("discarded|stats",file_name))
+```
+
+Calculate total size per sample (R1,R2 and singletons)
+```{r}
+sample_sizes <- du %>% group_by(sample_id) %>% summarise(total_kb=sum(space_kb))
+#convert to GB
+sample_sizes %<>% mutate(total_gb=total_kb/1000000) %>% select(!total_kb)
+```
+
+```{r}
+ggplot(sample_sizes,aes(x=total_gb))+
+  geom_histogram()
+```
+
+Which are these huge samples?
+```{r}
+sample_sizes %>% arrange(desc(total_gb)) %>% head(n=10)
+```
+A list of some small ones to sample
+```{r}
+sample_sizes %>% arrange(total_gb) %>% head(n=5)
+```
+
