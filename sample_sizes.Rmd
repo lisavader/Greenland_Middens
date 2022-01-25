@@ -54,7 +54,5 @@ sample_sizes %>% arrange(desc(total_gb)) %>% head(n=10)
 ```
 A list of some small ones to sample
 ```{r}
-sample_sizes %>% arrange(total_gb) %>% head(n=6)
+sample_sizes %>% arrange(total_gb) %>% head(n=5)
 ```
-
-The first sample has no R2 reads available! Something wrong here.
