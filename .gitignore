@@ -8,3 +8,5 @@ Snakefile
 snjob.sh
 trimReads
 
+.Rproj.user
+Greenland_Middens.Rproj
