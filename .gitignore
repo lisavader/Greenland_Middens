@@ -1,3 +1,4 @@
+#hpc files
 cluster_computerome.json
 clusterIO
 Greenland_HOPS
@@ -8,5 +9,8 @@ Snakefile
 snjob.sh
 trimReads
 
+#R specific files
 .Rproj.user
 Greenland_Middens.Rproj
+.RData
+.Rhistory
