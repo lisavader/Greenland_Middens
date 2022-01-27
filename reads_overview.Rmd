@@ -56,3 +56,11 @@ A list of some small ones to sample
 ```{r}
 sample_sizes %>% arrange(total_gb) %>% head(n=5)
 ```
+
+Add metadata
+
+How many samples at each location?
+```{r}
+metadata <- read.delim("Middens_2020_metadata.location.txt", header = TRUE)
+```
+
