@@ -1,5 +1,5 @@
 ---
-title: "Overview of sample sizes"
+title: "Overview of all reads"
 author: "Lisa"
 date: "25/01/2022"
 output: html_document
@@ -59,8 +59,17 @@ sample_sizes %>% arrange(total_gb) %>% head(n=5)
 
 Add metadata
 
-How many samples at each location?
 ```{r}
 metadata <- read.delim("Middens_2020_metadata.location.txt", header = TRUE)
+sample_info <- left_join(sample_sizes,metadata)
 ```
-
+How many samples at each location?
+```{r}
+table(sample_info$place)
+```
+Which depths do we have samples for?
+```{r}
+ggplot(sample_info,aes(x=displ_cat,fill=place))+
+  geom_histogram(stat = "count")
+```
+NA = control or sheep feces
