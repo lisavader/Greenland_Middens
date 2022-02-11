@@ -1,4 +1,4 @@
-/services/tools/quast/5.0.2/quast.pyc -t 1 metaflye/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_assembly.fasta metaflye/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_assembly.fasta metaflye/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_assembly.fasta metaflye/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_assembly.fasta metaflye/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_assembly.fasta metaflye/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_assembly.fasta metaflye/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_assembly.fasta metaflye/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_assembly.fasta metaflye/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_assembly.fasta metaflye/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_assembly.fasta metaflye/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_assembly.fasta metaflye/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_assembly.fasta metaflye/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_assembly.fasta metaflye/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_assembly.fasta metaflye/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_assembly.fasta metaflye/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_assembly.fasta metaflye/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_assembly.fasta metaflye/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly.fasta -o /home/projects/cge/data/projects/1214/quast/metaflye --labels "DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_assembly, DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_assembly, DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_assembly, DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_assembly, DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_assembly, DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_assembly, DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_assembly, DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_assembly, DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_assembly, DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_assembly, DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_assembly, DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_assembly, DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_assembly, DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_assembly, DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_assembly, DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_assembly, DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_assembly, DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly"
+/services/tools/quast/5.0.2/quast.pyc -t 1 --min-contig 1000 metaflye/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_assembly.fasta metaflye/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_assembly.fasta metaflye/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_assembly.fasta metaflye/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_assembly.fasta metaflye/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_assembly.fasta metaflye/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_assembly.fasta metaflye/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_assembly.fasta metaflye/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_assembly.fasta metaflye/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_assembly.fasta metaflye/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_assembly.fasta metaflye/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_assembly.fasta metaflye/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_assembly.fasta metaflye/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_assembly.fasta metaflye/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_assembly.fasta metaflye/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_assembly.fasta metaflye/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_assembly.fasta metaflye/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_assembly.fasta metaflye/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly.fasta -o /home/projects/cge/data/projects/1214/quast/metaflye --labels "DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_assembly, DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_assembly, DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_assembly, DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_assembly, DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_assembly, DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_assembly, DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_assembly, DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_assembly, DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_assembly, DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_assembly, DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_assembly, DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_assembly, DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_assembly, DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_assembly, DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_assembly, DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_assembly, DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_assembly, DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly"
 
 Version: 5.0.2
 
@@ -7,15 +7,15 @@ System information:
   Python version: 2.7.15
   CPUs number: 40
 
-Started: 2022-02-08 16:05:32
+Started: 2022-02-10 14:54:16
 
 Logging to /home/projects/cge/data/projects/1214/quast/metaflye/quast.log
 NOTICE: Output directory already exists and looks like a QUAST output dir. Existing results can be reused (e.g. previously generated alignments)!
 
 CWD: /home/projects/cge/data/projects/1214
 Main parameters: 
-  MODE: meta, threads: 1, minimum contig length: 500, minimum alignment length: 65, ambiguity: one, \
-  threshold for extensive misassembly size: 1000
+  MODE: meta, threads: 1, minimum contig length: 1000, minimum alignment length: 65, \
+  ambiguity: one, threshold for extensive misassembly size: 1000
 
 Contigs:
   Pre-processing...
@@ -38,7 +38,7 @@ Contigs:
   17 metaflye/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_assembly.fasta ==> DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_assembly
   18 metaflye/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly.fasta ==> DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly
 
-2022-02-08 16:06:18
+2022-02-10 14:55:08
 Running Basic statistics processor...
   Contig files: 
     1  DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_assembly
@@ -61,23 +61,23 @@ Running Basic statistics processor...
     18 DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly
   Calculating N50 and L50...
     1  DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_assembly, N50 = 20980, L50 = 27, Total length = 2065101, GC % = 58.37, # N's per 100 kbp =  0.00
-    2  DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_assembly, N50 = 186403, L50 = 21, Total length = 24815331, GC % = 60.01, # N's per 100 kbp =  0.00
-    3  DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_assembly, N50 = 46353, L50 = 50, Total length = 8012872, GC % = 55.01, # N's per 100 kbp =  0.00
-    4  DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_assembly, N50 = 16893, L50 = 86, Total length = 5269404, GC % = 61.11, # N's per 100 kbp =  0.00
-    5  DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_assembly, N50 = 249667, L50 = 58, Total length = 75114777, GC % = 60.41, # N's per 100 kbp =  0.00
-    6  DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_assembly, N50 = 78134, L50 = 320, Total length = 131100861, GC % = 63.55, # N's per 100 kbp =  0.00
-    7  DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_assembly, N50 = 86365, L50 = 187, Total length = 100529015, GC % = 63.78, # N's per 100 kbp =  0.00
-    8  DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_assembly, N50 = 24463, L50 = 610, Total length = 84058657, GC % = 56.43, # N's per 100 kbp =  0.00
-    9  DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_assembly, N50 = 71761, L50 = 154, Total length = 56937349, GC % = 60.77, # N's per 100 kbp =  0.00
-    10 DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_assembly, N50 = 48167, L50 = 1126, Total length = 304327389, GC % = 64.55, # N's per 100 kbp =  0.00
-    11 DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_assembly, N50 = 70781, L50 = 139, Total length = 67271576, GC % = 57.64, # N's per 100 kbp =  0.00
+    2  DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_assembly, N50 = 186403, L50 = 21, Total length = 24812417, GC % = 60.01, # N's per 100 kbp =  0.00
+    3  DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_assembly, N50 = 46353, L50 = 50, Total length = 8010527, GC % = 55.01, # N's per 100 kbp =  0.00
+    4  DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_assembly, N50 = 16893, L50 = 86, Total length = 5268473, GC % = 61.11, # N's per 100 kbp =  0.00
+    5  DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_assembly, N50 = 249667, L50 = 58, Total length = 75103428, GC % = 60.41, # N's per 100 kbp =  0.00
+    6  DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_assembly, N50 = 78849, L50 = 319, Total length = 131084785, GC % = 63.55, # N's per 100 kbp =  0.00
+    7  DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_assembly, N50 = 87077, L50 = 186, Total length = 100502958, GC % = 63.78, # N's per 100 kbp =  0.00
+    8  DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_assembly, N50 = 24496, L50 = 609, Total length = 84040853, GC % = 56.43, # N's per 100 kbp =  0.00
+    9  DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_assembly, N50 = 71761, L50 = 154, Total length = 56930110, GC % = 60.77, # N's per 100 kbp =  0.00
+    10 DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_assembly, N50 = 48265, L50 = 1125, Total length = 304212541, GC % = 64.55, # N's per 100 kbp =  0.00
+    11 DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_assembly, N50 = 70781, L50 = 139, Total length = 67259865, GC % = 57.64, # N's per 100 kbp =  0.00
     12 DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_assembly, N50 = 11617, L50 = 42, Total length = 1780657, GC % = 57.84, # N's per 100 kbp =  0.00
-    13 DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_assembly, N50 = 446743, L50 = 4, Total length = 14263381, GC % = 50.51, # N's per 100 kbp =  0.00
-    14 DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_assembly, N50 = 64574, L50 = 227, Total length = 72136048, GC % = 65.48, # N's per 100 kbp =  0.00
-    15 DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_assembly, N50 = 12867, L50 = 46, Total length = 1829258, GC % = 60.18, # N's per 100 kbp =  0.00
-    16 DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_assembly, N50 = 73728, L50 = 398, Total length = 184423270, GC % = 56.49, # N's per 100 kbp =  0.00
-    17 DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_assembly, N50 = 28314, L50 = 144, Total length = 21181741, GC % = 60.10, # N's per 100 kbp =  0.00
-    18 DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly, N50 = 24570, L50 = 94, Total length = 7773747, GC % = 62.62, # N's per 100 kbp =  0.00
+    13 DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_assembly, N50 = 446743, L50 = 4, Total length = 14262782, GC % = 50.51, # N's per 100 kbp =  0.00
+    14 DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_assembly, N50 = 64574, L50 = 227, Total length = 72131385, GC % = 65.48, # N's per 100 kbp =  0.00
+    15 DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_assembly, N50 = 12867, L50 = 46, Total length = 1828565, GC % = 60.18, # N's per 100 kbp =  0.00
+    16 DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_assembly, N50 = 73728, L50 = 398, Total length = 184325428, GC % = 56.49, # N's per 100 kbp =  0.00
+    17 DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_assembly, N50 = 28314, L50 = 144, Total length = 21179319, GC % = 60.10, # N's per 100 kbp =  0.00
+    18 DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_assembly, N50 = 24570, L50 = 94, Total length = 7771079, GC % = 62.62, # N's per 100 kbp =  0.00
   Drawing Nx plot...
     saved to /home/projects/cge/data/projects/1214/quast/metaflye/basic_stats/Nx_plot.pdf
   Drawing cumulative plot...
@@ -124,14 +124,14 @@ Done.
 
 NOTICE: Genes are not predicted by default. Use --gene-finding or --glimmer option to enable it.
 
-2022-02-08 16:07:07
+2022-02-10 14:56:06
 Creating large visual summaries...
 This may take a while: press Ctrl-C to skip this step..
   1 of 2: Creating Icarus viewers...
   2 of 2: Creating PDF with all tables and plots...
 Done
 
-2022-02-08 16:07:18
+2022-02-10 14:56:20
 RESULTS:
   Text versions of total report are saved to /home/projects/cge/data/projects/1214/quast/metaflye/report.txt, report.tsv, and report.tex
   Text versions of transposed total report are saved to /home/projects/cge/data/projects/1214/quast/metaflye/transposed_report.txt, transposed_report.tsv, and transposed_report.tex
@@ -140,8 +140,8 @@ RESULTS:
   Icarus (contig browser) is saved to /home/projects/cge/data/projects/1214/quast/metaflye/icarus.html
   Log is saved to /home/projects/cge/data/projects/1214/quast/metaflye/quast.log
 
-Finished: 2022-02-08 16:07:18
-Elapsed time: 0:01:45.798886
+Finished: 2022-02-10 14:56:20
+Elapsed time: 0:02:04.212731
 NOTICEs: 2; WARNINGs: 0; non-fatal ERRORs: 0
 
 Thank you for using QUAST!
