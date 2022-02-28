@@ -1,0 +1,185 @@
+/services/tools/quast/5.0.2/quast.pyc -t 1 --min-contig 1000 hybrid_metaspades_contigs/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds.fasta hybrid_metaspades_contigs/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds.fasta -o /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs --labels "DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds, DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds, DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds, DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds, DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds, DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds, DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds, DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds, DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds, DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds, DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds, DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds, DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds, DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds, DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds, DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds, DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds, DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds"
+
+Version: 5.0.2
+
+System information:
+  OS: Linux-3.10.0-1062.4.1.el7.x86_64-x86_64-with-centos-7.8.2003-Core (linux_64)
+  Python version: 2.7.15
+  CPUs number: 40
+
+Started: 2022-02-28 12:03:03
+
+Logging to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/quast.log
+NOTICE: Output directory already exists and looks like a QUAST output dir. Existing results can be reused (e.g. previously generated alignments)!
+
+CWD: /home/projects/cge/data/projects/1214
+Main parameters: 
+  MODE: meta, threads: 1, minimum contig length: 1000, minimum alignment length: 65, \
+  ambiguity: one, threshold for extensive misassembly size: 1000
+
+Contigs:
+  Pre-processing...
+  1  hybrid_metaspades_contigs/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds.fasta ==> DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds
+  2  hybrid_metaspades_contigs/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds.fasta ==> DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds
+  3  hybrid_metaspades_contigs/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds.fasta ==> DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds
+  4  hybrid_metaspades_contigs/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds.fasta ==> DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds
+  5  hybrid_metaspades_contigs/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds.fasta ==> DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds
+  6  hybrid_metaspades_contigs/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds.fasta ==> DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds
+  7  hybrid_metaspades_contigs/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds.fasta ==> DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds
+  8  hybrid_metaspades_contigs/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds.fasta ==> DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds
+  9  hybrid_metaspades_contigs/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds.fasta ==> DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds
+  10 hybrid_metaspades_contigs/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds.fasta ==> DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds
+  11 hybrid_metaspades_contigs/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds.fasta ==> DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds
+  12 hybrid_metaspades_contigs/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds.fasta ==> DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds
+  13 hybrid_metaspades_contigs/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds.fasta ==> DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds
+  14 hybrid_metaspades_contigs/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds.fasta ==> DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds
+  15 hybrid_metaspades_contigs/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds.fasta ==> DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds
+  16 hybrid_metaspades_contigs/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds.fasta ==> DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds
+  17 hybrid_metaspades_contigs/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds.fasta ==> DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds
+  18 hybrid_metaspades_contigs/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds.fasta ==> DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds
+
+2022-02-28 12:17:53
+Running Basic statistics processor...
+  Contig files: 
+    1  DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds
+    2  DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds
+    3  DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds
+    4  DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds
+    5  DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds
+    6  DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds
+    7  DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds
+    8  DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds
+    9  DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds
+    10 DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds
+    11 DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds
+    12 DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds
+    13 DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds
+    14 DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds
+    15 DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds
+    16 DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds
+    17 DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds
+    18 DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds
+  Calculating N50 and L50...
+    1  DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds, N50 = 1479, L50 = 22977, Total length = 117621372, GC % = 63.46, # N's per 100 kbp =  55.93
+    2  DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds, N50 = 1775, L50 = 26107, Total length = 208095932, GC % = 63.57, # N's per 100 kbp =  54.40
+    3  DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds, N50 = 2151, L50 = 38820, Total length = 362852720, GC % = 60.38, # N's per 100 kbp =  46.50
+    4  DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds, N50 = 2205, L50 = 38339, Total length = 357383490, GC % = 60.40, # N's per 100 kbp =  73.60
+    5  DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds, N50 = 3002, L50 = 42106, Total length = 757044416, GC % = 62.69, # N's per 100 kbp =  74.61
+    6  DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds, N50 = 4744, L50 = 19197, Total length = 618409962, GC % = 64.08, # N's per 100 kbp =  66.39
+    7  DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds, N50 = 5709, L50 = 9896, Total length = 436325865, GC % = 64.00, # N's per 100 kbp =  29.02
+    8  DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds, N50 = 2698, L50 = 37599, Total length = 511951935, GC % = 60.73, # N's per 100 kbp =  71.55
+    9  DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds, N50 = 3145, L50 = 22612, Total length = 425970985, GC % = 60.95, # N's per 100 kbp =  36.51
+    10 DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds, N50 = 9016, L50 = 15964, Total length = 914086805, GC % = 64.46, # N's per 100 kbp =  34.04
+    11 DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds, N50 = 2768, L50 = 26084, Total length = 396796303, GC % = 62.05, # N's per 100 kbp =  48.98
+    12 DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds, N50 = 1862, L50 = 36949, Total length = 239247540, GC % = 57.41, # N's per 100 kbp =  65.16
+    13 DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds, N50 = 1881, L50 = 36877, Total length = 291609924, GC % = 62.92, # N's per 100 kbp =  49.57
+    14 DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds, N50 = 3153, L50 = 22513, Total length = 426059776, GC % = 62.06, # N's per 100 kbp =  41.53
+    15 DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds, N50 = 1611, L50 = 30433, Total length = 169679311, GC % = 60.48, # N's per 100 kbp =  48.71
+    16 DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds, N50 = 5841, L50 = 9904, Total length = 494502648, GC % = 59.92, # N's per 100 kbp =  30.22
+    17 DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds, N50 = 2324, L50 = 19772, Total length = 265077540, GC % = 62.30, # N's per 100 kbp =  42.86
+    18 DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds, N50 = 2172, L50 = 10345, Total length = 112948908, GC % = 53.92, # N's per 100 kbp =  16.01
+  Drawing Nx plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/Nx_plot.pdf
+  Drawing cumulative plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/cumulative_plot.pdf
+  Drawing GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/GC_content_plot.pdf
+  Drawing DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds_GC_content_plot.pdf
+  Drawing DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds GC content plot...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds_GC_content_plot.pdf
+  Drawing Coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/coverage_histogram.pdf
+  Drawing DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010100_1_MG_Nuuk_ID116_S2_StV23B_5_10_out2_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010012_1_MG_Nar_ID18_SFB_P5_5_10_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010067_1_MG_Nuuk_ID81_S1_StV23C_5_10_out2_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010184_1_MG_Nuuk_ID207_S4_StV26A_0_5_inf3_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010216_1_MG_Ser_ID454_0_Cli1_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010143_1_MG_Nuuk_ID161_S3_StV24A_51_5955_mid12_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010148_1_MG_Nuuk_ID166_S3_StV24A_63_7165_mid17_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010197_1_MG_Nuuk_ID220_S4_StV26A_5_10_inf16_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010173_1_MG_Nuuk_ID191_S5_StNuuk_70_mid21_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010144_1_MG_Nuuk_ID162_S3_StV24A_59_6360_mid13_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010219_1_MG_Ser_ID457_0_Cli4_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010095_1_MG_Nuuk_ID111_S2_StV23B_5_10_inf8_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010135_1_MG_Nuuk_ID153_S3_StV24A_19_4130_mid4_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010063_1_MG_Nuuk_ID77_S1_StV23C_0_5_inf9_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010209_1_MG_Ser_ID446_0_5_Sed1_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010119_1_MG_Nuuk_ID137_S3_StV24A_0_5_inf9_scaffolds_coverage_histogram.pdf
+  Drawing DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds coverage histogram (bin size: 1x)...
+    saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/basic_stats/DTU_2021_1010073_1_MG_Nuuk_ID87_S1_StV23C_5_10_out8_scaffolds_coverage_histogram.pdf
+Done.
+
+NOTICE: Genes are not predicted by default. Use --gene-finding or --glimmer option to enable it.
+
+2022-02-28 12:26:47
+Creating large visual summaries...
+This may take a while: press Ctrl-C to skip this step..
+  1 of 2: Creating Icarus viewers...
+  2 of 2: Creating PDF with all tables and plots...
+Done
+
+2022-02-28 12:28:20
+RESULTS:
+  Text versions of total report are saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/report.txt, report.tsv, and report.tex
+  Text versions of transposed total report are saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/transposed_report.txt, transposed_report.tsv, and transposed_report.tex
+  HTML version (interactive tables and plots) is saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/report.html
+  PDF version (tables and plots) is saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/report.pdf
+  Icarus (contig browser) is saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/icarus.html
+  Log is saved to /home/projects/cge/data/projects/1214/quast/hybrid_metaspades_contigs/quast.log
+
+Finished: 2022-02-28 12:28:21
+Elapsed time: 0:25:18.076412
+NOTICEs: 2; WARNINGs: 0; non-fatal ERRORs: 0
+
+Thank you for using QUAST!
