@@ -73,3 +73,19 @@ ggplot(sample_info,aes(x=displ_cat,fill=place))+
   geom_histogram(stat = "count")
 ```
 NA = control or sheep feces
+
+For which samples do we have nanopore data?
+
+13 samples from Nuuk:
+```{r}
+table(sample_info %>% filter(nanopore=="yes" & place=="Nuuk") %>% select(s_type,displ_cat))
+```
+3 samples from Sermermiut:
+```{r}
+table(sample_info %>% filter(nanopore=="yes" & place=="Sermermiut") %>% select(s_type,displ_cat))
+```
+
+2 samples from Narsarsuaq:
+```{r}
+table(sample_info %>% filter(nanopore=="yes" & place=="Narsarsuaq") %>% select(s_type,displ_cat))
+```
