@@ -1,0 +1,70 @@
+---
+title: "Compare assembly strategies"
+author: "Lisa"
+date: "11/02/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+packages <- c("dplyr","magrittr","ggplot2")
+for (package in packages){
+  if (!require(package, character.only = TRUE)) install.packages(package)
+  require(package, character.only = TRUE)
+}
+```
+
+Download assembly statistics
+
+```{r}
+stats_short <- read.delim("quast/metaspades/transposed_report.tsv") %>% mutate(reads='short')
+stats_long <- read.delim("quast/metaflye/transposed_report.tsv") %>% mutate(reads='long')
+stats_hybrid <- read.delim("quast/hybrid_metaspades/transposed_report.tsv") %>% mutate(reads='hybrid')
+stats_hybrid_contigs <- read.delim("quast/hybrid_metaspades_contigs/transposed_report.tsv") %>% mutate(reads='hybrid_contigs')
+```
+
+Merge
+```{r}
+stats_all <- rbind(stats_short,stats_long,stats_hybrid,stats_hybrid_contigs)
+```
+
+Boxplots
+
+```{r}
+reads_order<-c("long","short","hybrid","hybrid_contigs")
+ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=X..contigs))+
+  geom_boxplot()+
+  geom_point()
+```
+```{r}
+ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=Total.length))+
+  geom_boxplot()+
+  geom_point()
+```
+
+```{r}
+ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=Largest.contig))+
+  geom_boxplot()+
+  geom_point()
+```
+```{r}
+ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=N50))+
+  geom_boxplot()+
+  geom_point()
+```
+
+```{r}
+ggplot(stats_all %>% filter(reads!="long"),aes(x=factor(reads, levels=reads_order),y=N50))+
+  geom_boxplot()+
+  geom_point()
+```
+
+```{r}
+ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=L50))+
+  geom_boxplot()+
+  geom_point()
+```
+
