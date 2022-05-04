@@ -1,4 +1,5 @@
-count,species,genus,family,order,class,phylum,kingdom,superkingdom250,Pseudomonas sp. HN11,Pseudomonas,Pseudomonadaceae,Pseudomonadales,Gammaproteobacteria,Proteobacteria,-,Bacteria
+count,species,genus,family,order,class,phylum,kingdom,superkingdom
+250,Pseudomonas sp. HN11,Pseudomonas,Pseudomonadaceae,Pseudomonadales,Gammaproteobacteria,Proteobacteria,-,Bacteria
 286,Klebsiella oxytoca,Klebsiella,Enterobacteriaceae,Enterobacterales,Gammaproteobacteria,Proteobacteria,-,Bacteria
 73,Pseudeurotium sp.,Pseudeurotium,Pseudeurotiaceae,-,Leotiomycetes,Ascomycota,Fungi,Eukaryota
 208,Serratia entomophila,Serratia,Yersiniaceae,Enterobacterales,Gammaproteobacteria,Proteobacteria,-,Bacteria
