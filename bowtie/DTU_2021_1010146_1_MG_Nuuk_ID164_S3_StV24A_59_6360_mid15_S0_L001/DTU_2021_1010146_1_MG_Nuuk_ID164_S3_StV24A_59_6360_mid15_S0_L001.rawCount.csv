@@ -1287,7 +1287,7 @@ count,species,genus,family,order,class,phylum,kingdom,superkingdom
 1,Iris ruthenica,Iris,Iridaceae,Asparagales,Magnoliopsida,Streptophyta,Viridiplantae,Eukaryota
 3,Massisteria sp. HFCC177,Massisteria,Massisteriidae,-,-,Cercozoa,-,Eukaryota
 1,Shewanella litorisediminis,Shewanella,Shewanellaceae,Alteromonadales,Gammaproteobacteria,Proteobacteria,-,Bacteria
-1,Uroglena lindiae,,Uroglena,Chromulinaceae,Chromulinales,Chrysophyceae,-,-,Eukaryota
+1,Uroglena lindiae,Uroglena,Chromulinaceae,Chromulinales,Chrysophyceae,-,-,Eukaryota
 2,Salinomyces polonicus,Salinomyces,Teratosphaeriaceae,Mycosphaerellales,Dothideomycetes,Ascomycota,Fungi,Eukaryota
 2,Roseitalea porphyridii,Roseitalea,Phyllobacteriaceae,Hyphomicrobiales,Alphaproteobacteria,Proteobacteria,-,Bacteria
 5,Terrestriporia alba,Terrestriporia,Terrestriporiaceae,Russulales,Agaricomycetes,Basidiomycota,Fungi,Eukaryota
