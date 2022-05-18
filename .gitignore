@@ -1,10 +1,14 @@
 #Ignore everything
 *
-# But descend into directories
+# Descend into directories
 !*/
 
+# Ignore these directories:
+Greenland_HOPS
+Greenland_KMA_mapping
+
 # Allow:
-!bowtie/**/*.csv
+!bowtie/**/*rawCount.csv
 !Bowtie_Pipeline
 !cluster_computerome.json
 !commands/**
