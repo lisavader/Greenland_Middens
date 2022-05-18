@@ -1,0 +1,116 @@
+---
+title: "Test coverage thresholds"
+author: "Lisa"
+date: "06/04/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "../bowtie/DTU_2021_1010055_1_MG_Nuuk_ID69_S1_StV23C_0_5_inf1_S0_L001/")
+```
+
+```{r, include=FALSE}
+packages <- c("dplyr","magrittr","ggplot2","readr","stringr","tidyr")
+for (package in packages){
+  if (!require(package, character.only = TRUE)) install.packages(package)
+  require(package, character.only = TRUE)
+}
+```
+
+```{r}
+theme_set(theme_bw())
+```
+
+
+Import counts
+
+```{r}
+#read files into list of dataframes (one for each file)
+filelist <- list.files(pattern="PhyloNorway")
+files = lapply(filelist, read_csv,col_names = c("name","count"))
+files = lapply(files,as.data.frame)
+
+#add info on filtering type and taxonomic level
+type = str_match(filelist,"PhyloNorway.(.*?)\\.")[,2]
+tax_level = str_match(filelist,"[05t]\\.(.*?)\\Count")[,2]
+files = mapply(cbind,files,"type"=type,"tax_level"=tax_level,SIMPLIFY = F)
+
+#merge dataframes into one big dataframe
+all_counts <- bind_rows(files)
+```
+
+Get list of recognized flora of Greenland (includes species, genus and family)
+```{r}
+known_flora <- read_file("../../wikipage_list_of_flora_of_greenland.txt")
+#some families that aren't included in the original list:
+added_families <- read_file("../../Greenland_families_extended.txt")
+#add order level:
+added_orders <- read_file("../../Greenland_orders.txt")
+
+#combine the files:
+known_flora_complete <- paste(known_flora,added_families,added_orders)
+```
+
+Check for each hit (on level of species,genus, family or order), whether it is included in the flora list
+```{r}
+all_counts %<>% rowwise() %>% mutate(expected=ifelse(grepl(name,known_flora_complete),"yes","no"))
+#if no taxon name was retrieved from the taxonomy database, the original ID was returned.
+#in this case we do not know whether the hit belongs to a recognized species
+all_counts %<>% mutate(expected=ifelse(grepl("AP",name),"unknown",expected))
+```
+
+Set factor levels
+```{r}
+order_tax_level <- c("species","genus","family","order")
+order_type <- c("bestHit","filtered590","filtered690","filtered790","filtered890","filtered990","filtered595","filtered695","filtered795","filtered895","filtered995")
+order_expected <- c("unknown","no","yes")
+```
+
+Set more understandable names for the filtering types
+```{r}
+filtering_labels <- c("bestHit" = "no filter","filtered590" = "CV:50 ID:90","filtered690" = "CV:60 ID:90","filtered790" = "CV:70 ID:90","filtered890" = "CV:80 ID:90","filtered990" = "CV:90 ID:90","filtered595" = "CV:50 ID:95","filtered695" = "CV:60 ID:95","filtered795" = "CV:70 ID:95","filtered895" = "CV:80 ID:95","filtered995" = "CV:90 ID:95")
+```
+
+```{r}
+ggplot(all_counts ,aes(x=factor(tax_level,levels = order_tax_level)))+
+  geom_bar(aes(fill=factor(expected,levels = order_expected)))+
+  facet_grid(~ factor(type,levels=order_type),labeller = as_labeller(filtering_labels))+
+  scale_fill_manual(values=c("#acabac","#714c8b","#F6C030"))+
+  guides(fill=guide_legend(reverse = TRUE))+
+  labs(fill="Included in flora of Greenland",x="Dataset",y="Nr. of unique taxa")+
+  scale_x_discrete(labels=c("gen","fam","ord"))
+```
+
+```{r}
+ggplot(all_counts %>% filter(tax_level!="species"),aes(x=factor(tax_level,levels = order_tax_level),y=count))+
+  geom_bar(stat='identity',aes(fill=factor(expected,levels = order_expected)))+
+  facet_grid(~ factor(type,levels=order_type),labeller = as_labeller(filtering_labels))+
+  scale_fill_manual(values=c("#acabac","#714c8b","#F6C030"))+
+  guides(fill=guide_legend(reverse = TRUE))+
+  labs(fill="Included in flora of Greenland",x="Dataset",y="Total nr. of hits")+
+  scale_x_discrete(labels=c("gen","fam","ord"))
+```
+I want to know what stringency gives the best cost / benefit
+
+```{r}
+expected_yes_no <- all_counts %>% filter(tax_level=="genus",expected!="unknown") %>% group_by(type) %>% count(expected) %>% spread(expected,n)
+```
+
+```{r}
+ggplot(expected_yes_no %>% filter(type!="bestHit"), aes(x=no,y=yes,colour=type))+
+  geom_point(size=2)+
+  geom_abline()+
+  xlim(40,140)+
+  ylim(40,140)+
+  scale_colour_manual(breaks=order_type[-1],labels=c("CV:50 ID:90","CV:60 ID:90","CV:70 ID:90","CV:80 ID:90","CV:90 ID:90","CV:50 ID:95","CV:60 ID:95","CV:70 ID:95","CV:80 ID:95","CV:90 ID:95"),values=c("#A3E5AC","#82C58E","#61A570","#408452","#1F6434","#A3D4E6","#84A7C5","#667AA5","#474C84","#281F63"))
+```
+
+```{r}
+totalhit_yes_no <- all_counts %>% filter(tax_level=="genus",expected!="unknown") %>% group_by(type,expected) %>% summarise(total_hits=sum(count)) %>% spread(expected,total_hits)
+```
+```{r}
+ggplot(totalhit_yes_no %>% filter(type!="bestHit"), aes(x=no,y=yes,colour=type))+
+  geom_point(size=2)+
+  scale_colour_manual(breaks=order_type[-1],labels=c("CV:50 ID:90","CV:60 ID:90","CV:70 ID:90","CV:80 ID:90","CV:90 ID:90","CV:50 ID:95","CV:60 ID:95","CV:70 ID:95","CV:80 ID:95","CV:90 ID:95"),values=c("#A3E5AC","#82C58E","#61A570","#408452","#1F6434","#A3D4E6","#84A7C5","#667AA5","#474C84","#281F63"))
+```

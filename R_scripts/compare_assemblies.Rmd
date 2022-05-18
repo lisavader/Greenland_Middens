@@ -24,11 +24,11 @@ theme_set(theme_bw())
 Download assembly statistics
 
 ```{r}
-stats_short <- read.delim("quast/metaspades/transposed_report.tsv") %>% mutate(method='SPAdes',reads='short')
-stats_long <- read.delim("quast/metaflye/transposed_report.tsv") %>% mutate(method='Flye',reads='long')
-stats_hybrid <- read.delim("quast/hybrid_metaspades/transposed_report.tsv") %>% mutate(method='SPAdes --nanopore',reads='hybrid')
-stats_hybrid_contigs <- read.delim("quast/hybrid_metaspades_contigs/transposed_report.tsv") %>% mutate(method='SPAdes --trusted-contigs',reads='hybrid')
-stats_merged <- read.delim("quast/merged_long_hybrid/transposed_report.tsv") %>% mutate(method='SPAdes --trusted-contigs + Flye',reads='hybrid')
+stats_short <- read.delim("../quast/metaspades/transposed_report.tsv") %>% mutate(method='SPAdes',reads='short')
+stats_long <- read.delim("../quast/metaflye/transposed_report.tsv") %>% mutate(method='Flye',reads='long')
+stats_hybrid <- read.delim("../quast/hybrid_metaspades/transposed_report.tsv") %>% mutate(method='SPAdes --nanopore',reads='hybrid')
+stats_hybrid_contigs <- read.delim("../quast/hybrid_metaspades_contigs/transposed_report.tsv") %>% mutate(method='SPAdes --trusted-contigs',reads='hybrid')
+stats_merged <- read.delim("../quast/merged_long_hybrid/transposed_report.tsv") %>% mutate(method='SPAdes --trusted-contigs + Flye',reads='hybrid')
 ```
 
 Merge

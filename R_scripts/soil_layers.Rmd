@@ -1,0 +1,54 @@
+---
+title: "Soil layers"
+author: "Lisa"
+date: "28/04/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+packages <- c("dplyr","magrittr","ggplot2")
+for (package in packages){
+  if (!require(package, character.only = TRUE)) install.packages(package)
+  require(package, character.only = TRUE)
+}
+```
+
+```{r}
+theme_set(theme_bw())
+```
+
+Import metadata:
+
+```{r}
+metadata <- read.delim("../Middens_2020_metadata.location.txt", header = TRUE)
+```
+
+Select only midden data from Nuuk:
+
+```{r}
+middendata <- metadata %>% filter(s_type=="midden" & place=="Nuuk")
+#convert depth to numeric
+middendata %<>% mutate(displacement=as.numeric(displacement))
+```
+
+Plot the different depths of our dataset:
+
+```{r}
+set.seed(50)
+soil_char_order <- c("root layer","vegetal","run off","middenish","wood","burn off","black layer","midden","sediment","midden deposits ","permafrost")
+ggplot(middendata,aes(y=displacement,x=rnorm(nrow(middendata)),colour=factor(soil_char,levels=soil_char_order)))+
+  geom_point(size=2)+
+  scale_y_reverse()
+```
+
+Possible groups:
+
+layer 1: 0-20 cm (plant materials)
+layer 2: 21-35 cm (middenish)
+layer 3: 36-65 cm (midden)
+layer 4: 70+ cm (permafrost)
+other: seal-skin, wood, butter-bones, burn off

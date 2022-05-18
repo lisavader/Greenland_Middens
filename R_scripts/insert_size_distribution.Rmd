@@ -1,0 +1,33 @@
+---
+title: "insert sizes"
+author: "Lisa"
+date: "24/03/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+packages <- c("dplyr","magrittr","ggplot2")
+for (package in packages){
+  if (!require(package, character.only = TRUE)) install.packages(package)
+  require(package, character.only = TRUE)
+}
+```
+
+```{r}
+theme_set(theme_bw())
+```
+
+```{r}
+insert_sizes <- read.csv("../bowtie/DTU_2021_1010236_1_MG_Mid_ID_A1_26A_Midden_S0_L001/insert_sizes_PhyloNorway_7.txt",header = FALSE)
+```
+
+```{r}
+ggplot(insert_sizes,aes(x=V1))+
+  geom_histogram()+
+  geom_vline(aes(xintercept = mean(V1) + 4*sd(V1)), size = 0.5, linetype = "dashed")
+```
+

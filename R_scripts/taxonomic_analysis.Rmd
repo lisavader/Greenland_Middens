@@ -1,0 +1,626 @@
+---
+title: "Taxonomic analysis"
+author: "Lisa"
+date: "04/05/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+packages <- c("dplyr","magrittr","stringr","tidyr","tibble","janitor","ggplot2","vegan","zCompositions","compositions","ggsignif")
+for (package in packages){
+  if (!require(package, character.only = TRUE)) install.packages(package)
+  require(package, character.only = TRUE)
+}
+```
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+packages <- c("ComplexHeatmap","ANCOMBC")
+for (package in packages){
+  if (!require(package, character.only = TRUE)) BiocManager::install(package)
+  require(package, character.only = TRUE)
+}
+```
+
+```{r}
+theme_set(theme_bw())
+```
+
+### Read in samples
+
+```{r}
+#list all files with count data
+filelist <- list.files(recursive = TRUE,pattern = "*rawCount.csv")
+#retrieve the names of the corresponding samples
+sample_names <- str_replace(filelist,"../bowtie/","") %>% str_replace("/.*","")
+#remove extension '_S0_L001'
+sample_names <- sub("_S0_L001","",sample_names)
+#read in all the count files (this creates a list of dataframes)
+files = lapply(filelist, read.csv)
+#rename the dfs with the correct sample name
+names(files) <- sample_names
+
+#combine all into a giant dataframe
+total_data <- files %>% bind_rows(.id='sample')
+```
+
+Sometimes, it happens that there are different upper-level taxa assigned to the same species (multiple taxids per species)
+For example, the bacterium Rhodopseudomonas palustris is sometimes assigned to the order Rhizobiales, and other times to the order Hyphomicrobiales.
+This is a problem, because we count it as two different species, instead of one.
+
+To solve this, whenever their are multiple rows per species, I merge the counts and copy the taxonomic data from the first line encountered of this species.
+```{r}
+#we only do this for species that actually have a name
+named_species <- total_data %>% filter(species!="-" & !grepl(".",species,fixed = TRUE))
+unnamed_species <- total_data %>% filter(species=="-" & grepl(".",species,fixed = TRUE))
+#find duplicated species, and add up their counts
+named_species %<>% group_by(sample,species) %>% mutate(count=ifelse(n()>1 & species!="-",sum(count),count))
+#remove rows belonging to duplicated species, except the top one
+named_species %<>% slice(1) %>% ungroup()
+
+#however, we now have the problem that the taxonomic info can still be different between samples (because they had a different top row)
+#we split the data into a part with species counts, and the taxonomic info
+counts <- named_species %>% dplyr::select(sample,count,species)
+taxa <- named_species %>% dplyr::select(-c(sample,count))
+#now we make sure there is only one taxonomic categorisation per species, by only using the top one
+taxa %<>% group_by(species) %>% slice(1) %>% ungroup()
+
+#merge the counts, taxa and unnamed species again
+named_species <- full_join(counts,taxa)
+total_data <- rbind(named_species,unnamed_species)
+```
+
+Build a matrix that shows the count of each species per sample.
+
+```{r}
+#select species data and change data format
+species_matrix <- total_data %>% filter(species!="-" & !grepl(".",species,fixed = TRUE)) %>% dplyr::select(sample,count,species) %>% spread(sample,count)
+#the vegan package needs the species as columns
+species_matrix %<>% t() %>% row_to_names(row_number = 1)
+#convert NA to 0
+species_matrix %<>% replace(is.na(.),0)
+#strip whitespace
+species_matrix %<>% replace(is.character(.),str_trim(.))
+#convert from matrix to dataframe
+species_matrix %<>% as.data.frame() 
+#make columns numeric
+species_matrix %<>% mutate(across(.fns = as.numeric))
+```
+
+### Read in metadata
+
+```{r}
+metadata <- read.delim("../Middens_2020_metadata.location.txt", header = TRUE)
+#add long id to metadata
+id_conversion <- read.delim("../id_conversion_table.tsv", header = TRUE)
+metadata %<>% left_join(id_conversion,by=c("sample_id"="short_id"))
+#select only midden samples
+middendata <- metadata %>% filter(s_type=="midden" & place=="Nuuk")
+#convert depth to numeric
+middendata %<>% mutate(displacement=as.numeric(displacement))
+```
+
+Add previously defined groups:
+layer 1: 0-20 cm (plant materials)
+layer 2: 21-35 cm (middenish)
+layer 3: 36-65 cm (midden)
+layer 4: 70+ cm (permafrost)
+other: seal-skin, wood, butter-bones, burn off
+
+```{r}
+middendata %<>% mutate(group=ifelse(displacement<=20,1,NA))
+middendata %<>% mutate(group=ifelse(displacement>20 & displacement<=35,2,group))
+middendata %<>% mutate(group=ifelse(displacement>35 & displacement<=65,3,group))
+middendata %<>% mutate(group=ifelse(displacement>=70,4,group))
+#middendata %<>% mutate(group=ifelse(soil_char %in% c("wood","black layer"),soil_char,group))
+```
+
+
+### Part one: Clr-based PCA
+
+To get clr values, we cannot have 0s in our dataset (you cannot take the log of 0).
+For this we use the bayesian-multiplicative replacement method cmultRepl.
+
+Discard species that don't have <threshold> hits for any sample
+
+```{r}
+colMax <- function(data) lapply(data, max, na.rm = TRUE)
+species_matrix_short <- species_matrix %>% select_if(colMax(species_matrix) >= 20)
+```
+
+```{r}
+imputed_species_matrix <- cmultRepl(t(species_matrix_short),output = "p-counts")
+```
+```{r}
+species_clr <- clr(t(imputed_species_matrix))
+```
+
+```{r}
+species_prcomp <- prcomp(species_clr)
+species_PCs <- species_prcomp$x %>% as.data.frame()
+```
+
+```{r}
+ggplot(species_PCs,aes(PC1,PC2))+
+  geom_point()+
+  labs(x="PC1: 10.7% of variance",y="PC2: 6.2% of variance")
+```
+Calculate the variance per PC (variance = standard dev squared), and divide by total variance.
+```{r}
+species_PCvar <- data.frame("PC" = colnames(species_prcomp$x),
+                    "variance" = species_prcomp$sdev^2/sum(species_prcomp$sdev^2)*100)
+```
+
+```{r}
+ggplot(species_PCvar,aes(factor(PC,level=PC),variance,group=1))+
+  geom_point()+
+  geom_line()
+```
+
+This was on the species level. The PCs don't explain a lot of the variance. We could be looking at groups that are too specific. Let's try it at the genus level.
+
+
+```{r}
+#select genus data
+genus_data <- total_data %>% filter(genus!="-" & !grepl(".",genus,fixed = TRUE)) %>% dplyr::select(sample,count,genus)
+#add together all counts per sample
+genus_data %<>% group_by(sample,genus) %>% summarise(count=sum(count))
+```
+Make matrix
+
+```{r}
+#transform data to form a matrix
+genus_matrix <- genus_data %>% spread(sample,count)
+genus_matrix %<>% t() %>% row_to_names(row_number = 1)
+#convert NA to 0
+genus_matrix %<>% replace(is.na(.),0)
+#strip whitespace
+genus_matrix %<>% replace(is.character(.),str_trim(.))
+#convert from matrix to dataframe
+genus_matrix %<>% as.data.frame() 
+#make columns numeric
+genus_matrix %<>% mutate(across(.fns = as.numeric))
+
+```
+
+Discard genera that don't have <threshold> hits for any sample
+
+```{r}
+colMax <- function(data) lapply(data, max, na.rm = TRUE)
+genus_matrix_short <- genus_matrix %>% select_if(colMax(genus_matrix) >= 20)
+```
+
+```{r}
+imputed_genus_matrix <- cmultRepl(t(genus_matrix_short),output = "p-counts")
+```
+```{r}
+genus_clr <- clr(t(imputed_genus_matrix))
+```
+
+```{r}
+genus_prcomp <- prcomp(genus_clr)
+genus_PCs <- genus_prcomp$x %>% as.data.frame()
+```
+
+```{r}
+ggplot(genus_PCs,aes(PC1,PC2))+
+  geom_point()+
+  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance")
+```
+Calculate the variance per PC (variance = standard dev squared), and divide by total variance.
+```{r}
+genus_PCvar <- data.frame("PC" = colnames(genus_prcomp$x),
+                    "variance" = genus_prcomp$sdev^2/sum(genus_prcomp$sdev^2)*100)
+```
+
+```{r}
+ggplot(genus_PCvar,aes(factor(PC,level=PC),variance,group=1))+
+  geom_point()+
+  geom_line()
+```
+
+There is very little difference, but the species-based PCA seems to explain a bit more of the variance.
+
+Add metadata
+
+```{r}
+species_PCs %<>% rownames_to_column("sample")
+species_PCs %<>% left_join(middendata,by=c("sample" = "long_id"))
+genus_PCs %<>% rownames_to_column("sample")
+genus_PCs %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(species_PCs,aes(PC1,PC2,colour=factor(group)))+
+  geom_point()+
+  labs(x="PC1: 10.7% of variance",y="PC2: 6.2% of variance")
+```
+
+```{r}
+ggplot(species_PCs,aes(PC1,PC2,colour=site_cat))+
+  geom_point()+
+  labs(x="PC1: 10.7% of variance",y="PC2: 6.2% of variance")
+```
+
+```{r}
+ggplot(genus_PCs,aes(PC1,PC2,colour=factor(group)))+
+  geom_point()+
+  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance")
+```
+
+```{r}
+ggplot(genus_PCs,aes(PC1,PC2,colour=site_cat))+
+  geom_point()+
+  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance")
+```
+
+It seems the site is way more important than the depth for explaining the variance.
+
+Is sampling depth a confounding factor?
+
+```{r}
+total_hits <- species_matrix %>% rowSums()
+```
+
+```{r}
+species_PCs %<>% mutate(total_hits=total_hits)
+genus_PCs %<>% mutate(total_hits=total_hits)
+```
+
+```{r}
+ggplot(species_PCs,aes(PC1,PC2,colour=total_hits))+
+  geom_point()+
+  scale_color_continuous(type="viridis")+
+  labs(x="PC1: 10.7% of variance",y="PC2: 6.2% of variance")
+```
+
+```{r}
+ggplot(genus_PCs,aes(PC1,PC2,colour=total_hits))+
+  geom_point()+
+  scale_color_continuous(type="viridis")+
+  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance")
+```
+
+### Part two: Diversity
+
+Let's get the species richness
+
+```{r}
+richness <- species_matrix %>% replace(.>0,1) %>% rowSums()
+```
+
+But samples have differences in their total nr. of hits:
+
+Rarefaction curve
+
+```{r}
+rarecurve(species_matrix,step=1000,label = FALSE)
+```
+
+Rarefied species richness:
+
+```{r}
+raremin <- min(total_hits)
+rarefied_richness <- rarefy(species_matrix,raremin)
+```
+
+```{r}
+rarefied_richness %<>% as.data.frame() 
+colnames(rarefied_richness) <- c("rarefied_richness")
+rarefied_richness %<>% rownames_to_column("sample")
+rarefied_richness %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(rarefied_richness,aes(site_cat,rarefied_richness))+
+  geom_boxplot()+
+  geom_point()
+```
+
+```{r}
+ggplot(rarefied_richness,aes(factor(group),rarefied_richness))+
+  geom_boxplot()+
+  geom_point()
+```
+
+
+```{r}
+simpson <- diversity(species_matrix, "simpson")
+```
+
+```{r}
+simpson %<>% as.data.frame() 
+colnames(simpson) <- c("simpson")
+simpson %<>% rownames_to_column("sample")
+simpson %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(simpson,aes(site_cat,simpson))+
+  geom_boxplot()+
+  geom_point()
+```
+
+```{r}
+ggplot(simpson,aes(factor(group),simpson))+
+  geom_boxplot()+
+  geom_point()
+```
+
+```{r}
+shannon <- diversity(species_matrix, "shannon")
+```
+
+```{r}
+shannon %<>% as.data.frame() 
+colnames(shannon) <- c("shannon")
+shannon %<>% rownames_to_column("sample")
+shannon %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(shannon,aes(site_cat,shannon))+
+  geom_boxplot()+
+  geom_point()
+```
+
+```{r}
+ggplot(shannon,aes(factor(group),shannon))+
+  geom_boxplot()+
+  geom_point()
+```
+
+### Different taxonomic levels
+
+Superkingdom level
+
+```{r}
+#select superkingdom data
+skingdom_data <- total_data %>% filter(superkingdom!="-" & !grepl(".",superkingdom,fixed = TRUE)) %>% dplyr::select(sample,count,superkingdom)
+#add together all counts per sample
+skingdom_data %<>% group_by(sample,superkingdom) %>% summarise(count=sum(count))
+```
+Add clr values
+```{r}
+#transform data to form a matrix
+skingdom_matrix <- skingdom_data %>% spread(sample,count)
+skingdom_matrix %<>% t() %>% row_to_names(row_number = 1)
+#strip whitespace
+skingdom_matrix %<>% replace(is.character(.),str_trim(.))
+#convert from matrix to dataframe
+skingdom_matrix %<>% as.data.frame() 
+#make columns numeric
+skingdom_matrix %<>% mutate(across(.fns = as.numeric))
+
+#calculate clr
+skingdom_clr <- clr(skingdom_matrix)
+#transform to long format
+skingdom_clr_long <- skingdom_clr %>% as.data.frame() %>% rownames_to_column("sample")
+skingdom_clr_long %<>% gather(-1,key="superkingdom",value = "clr")
+```
+
+```{r}
+middendata_ordered <- middendata %>% arrange(site_cat,displacement)
+```
+
+```{r}
+anno=rowAnnotation(depth=middendata$displacement)
+row_groups <- middendata$site_cat
+heatmap = Heatmap(skingdom_clr, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+draw(heatmap)
+```
+Kingdoms of the Eukaryotes
+
+```{r}
+#select euk kingdom data
+kingdom_data <- total_data %>% filter(superkingdom=="Eukaryota" & kingdom!="-" & !grepl(".",kingdom,fixed = TRUE)) %>% dplyr::select(sample,count,kingdom)
+#add together all counts per sample
+kingdom_data %<>% group_by(sample,kingdom) %>% summarise(count=sum(count))
+```
+Add clr values
+```{r}
+#transform data to form a matrix
+kingdom_matrix <- kingdom_data %>% spread(sample,count)
+kingdom_matrix %<>% t() %>% row_to_names(row_number = 1)
+#strip whitespace
+kingdom_matrix %<>% replace(is.character(.),str_trim(.))
+#convert from matrix to dataframe
+kingdom_matrix %<>% as.data.frame() 
+#make columns numeric
+kingdom_matrix %<>% mutate(across(.fns = as.numeric))
+
+#calculate clr
+kingdom_clr <- clr(kingdom_matrix)
+```
+
+```{r}
+anno=rowAnnotation(depth=middendata$displacement)
+row_groups <- middendata$site_cat
+heatmap = Heatmap(kingdom_clr, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+draw(heatmap)
+```
+Look at the most found plants:
+
+```{r}
+top_plants <- total_data %>% filter(kingdom=="Viridiplantae") %>% group_by(species) %>% summarise(total_count=sum(count))
+```
+
+And animals:
+
+```{r}
+top_animals <- total_data %>% filter(kingdom=="Metazoa") %>% group_by(species) %>% summarise(total_count=sum(count))
+```
+
+Grains:
+- Triticum aestivum (wheat)
+- Hordeum vulgare (barley)
+- Secale cereale (rye)
+- Avena sativa (oats)
+
+Interesting animals:
+- Homo sapiens
+- Pecten maximus (king scallop)
+- Mus musculus
+- Sus scrofa (wild boar)
+- Canis lupus (gray wolf)
+- Lipotes vexillifer (dolphin)
+- Cervus elaphus (red deer)
+- Felis catus (cat)
+
+The animal hits are shit (not enough species in database).
+
+```{r}
+species_clr_selection1 <- species_clr %>% as.data.frame %>% dplyr::select(`Homo sapiens`,`Triticum aestivum`,`Hordeum vulgare`,`Secale cereale`,`Avena sativa`,`Pecten maximus`,`Sus scrofa`,`Canis lupus`,`Lipotes vexillifer`,`Cervus elaphus`,`Mus musculus`,`Felis catus`,`Ovis canadensis`,`Bos taurus`)
+```
+
+```{r}
+anno=rowAnnotation(depth=middendata$displacement)
+row_groups <- middendata$site_cat
+heatmap = Heatmap(species_clr_selection1, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+draw(heatmap)
+```
+
+Pathogenic bacteria:
+- Brucella sp.
+- Salmonella enterica
+- Yersinia pestis
+- Burkholderia sp.
+- Bacillus anthracis
+
+```{r}
+species_clr_selection2 <- species_clr %>% as.data.frame %>% dplyr::select(`Brucella abortus`,`Brucella suis`,`Sus scrofa`,`Bos taurus`,`Ovis canadensis`,`Salmonella enterica`,`Yersinia pestis`,`Burkholderia pseudomallei`,`Bacillus anthracis`,`Clostridium perfringens`,`Clostridium botulinum`,`Clostridium baratii`,`Listeria monocytogenes`,`Mycobacterium tuberculosis`,`Escherichia coli`,`Blastomyces dermatitidis`)
+```
+
+```{r}
+anno=rowAnnotation(depth=middendata$displacement)
+row_groups <- middendata$site_cat
+heatmap = Heatmap(species_clr_selection2, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+draw(heatmap)
+```
+
+```{r}
+genus_clr_selection2 <- genus_clr %>% as.data.frame %>% dplyr::select(`Homo`,`Brucella`,`Sus`,`Bos`,`Ovis`,`Salmonella`,`Yersinia`,`Burkholderia`,`Clostridium`,`Listeria`,`Mycobacterium`,`Shigella`,`Coccidioides`)
+```
+
+```{r}
+anno=rowAnnotation(depth=middendata$displacement)
+row_groups <- middendata$site_cat
+heatmap = Heatmap(genus_clr_selection2, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+draw(heatmap)
+```
+
+Are there associations between hosts (human, wild boar, cow, wild sheep) and pathogenic bacteria?
+
+### ANCOM-BC
+
+Build taxonomy table
+```{r}
+tax_data <- total_data %>% filter(species!="-" & !grepl(".",species,fixed = TRUE)) %>% dplyr::select(-c(sample,count)) %>% unique()
+tax_data %<>% column_to_rownames("species")
+tax_table <- phyloseq::tax_table(as.matrix(tax_data))
+```
+
+Build otu table, using the short species matrix (low-abundant taxa filtered out)
+```{r}
+otu_data <- as.matrix(species_matrix_short)
+#colnames(otu_data) <- taxa_names(tax_table)
+otu_table <- phyloseq::otu_table(otu_data,taxa_are_rows=FALSE)
+```
+
+Get sample metadata
+```{r}
+sample_data <- phyloseq::sample_data(middendata %>% column_to_rownames("long_id"))
+```
+
+Combine into phyloseq object
+```{r}
+pseq=phyloseq(otu_table,tax_table,sample_data)
+```
+
+What causes the differences between sites?
+
+Run ANCOM-BC
+```{r}
+ancombc_site = ancombc(phyloseq = pseq, formula = "site_cat", zero_cut = 1.1, group = "site_cat", struc_zero = TRUE, global = TRUE)
+#we have already filtered the data, so no need to use the zero_cut option
+```
+
+Look at the taxa that are differentially abundant between any of the sites (the global res):
+```{r}
+diff_taxa_site <- ancombc_site$res_global
+diff_taxa_site %<>% merge(tax_data, by = 0) %>% rename("species"=Row.names)
+```
+
+```{r}
+#get counts of main (super)kingdoms
+diff_kingdoms_site <- diff_taxa_site %>% filter(superkingdom=="Bacteria" | kingdom %in% c("Fungi","Viridiplantae","Metazoa")) %>% group_by(kingdom,diff_abn) %>% count() %>% mutate(kingdom=ifelse(kingdom=="-","Bacteria",kingdom)) %>% rename("taxon"=kingdom,"count"=n)
+#add phyla
+diff_phyla_site <- diff_taxa_site %>% filter(phylum %in% c("Proteobacteria","Actinobacteria","Firmicutes","Ascomycota","Basidiomycota","Mucoromycota","Chordata","Arthropoda")) %>% group_by(phylum,diff_abn) %>% count() %>% rename("taxon"=phylum,"count"=n)
+main_taxa_site <- rbind(diff_kingdoms_site,diff_phyla_site)
+```
+
+```{r}
+#add percentages
+main_taxa_site %<>% group_by(taxon) %>% mutate(perc_diff_abn=count/sum(count)*100)
+main_taxa_site %<>% filter(diff_abn==TRUE) %>% dplyr::select(-diff_abn)
+```
+
+```{r}
+taxon_order=c("Bacteria","Proteobacteria","Actinobacteria","Firmicutes","Fungi","Ascomycota","Basidiomycota","Mucoromycota","Metazoa","Chordata","Arthropoda","Viridiplantae")
+ggplot(main_taxa_site,aes(y=factor(taxon,levels = rev(taxon_order)),fill=factor(taxon,levels = (taxon_order))))+
+  geom_bar(aes(x=perc_diff_abn),stat = "identity")+
+  xlim(0,100)+
+  scale_fill_manual(values = c("#17865f","#3db58c","#3db58c","#3db58c","#3269AC","#6492ca","#6492ca","#6492ca","#b14d65","#ce798e","#ce798e","#55c358"))
+```
+Do we find differentially abundant taxa between soil layers?
+
+Run ancombc, with depth as a  continuous variable.
+We still take the site into account in this model, so that differences that are explained by site rather than depth are not part of the output.
+
+```{r}
+ancombc_depth = ancombc(phyloseq = pseq, formula = "site_cat + displacement", zero_cut = 1.1)
+```
+
+get differentially abundant taxa:
+
+```{r}
+diff_taxa_depth <- ancombc_depth$res$diff_abn %>% filter(displacement==TRUE) %>% rownames_to_column("species") %>% dplyr::select(species)
+#do not include 'uncultured organism', this is a pile of many unknown organisms, not very informative
+diff_taxa_depth %<>% filter(species!="uncultured organism")
+```
+
+combine with fold change, standard error and taxonomy info:
+```{r}
+diff_taxa_depth %<>% left_join(ancombc_depth$res$beta %>% dplyr::select(displacement) %>% rownames_to_column("species")) %>% rename("log_foldchange"=displacement)
+diff_taxa_depth %<>% left_join(ancombc_depth$res$se %>% dplyr::select(displacement) %>% rownames_to_column("species")) %>% rename("se"=displacement)
+diff_taxa_depth %<>% left_join(tax_data %>% rownames_to_column("species"))
+```
+```{r}
+#change order of the species variable
+diff_taxa_depth %<>% arrange(desc(log_foldchange))
+species_order <- diff_taxa_depth$species
+```
+
+
+```{r}
+ggplot(diff_taxa_depth,aes(y=log_foldchange,x=factor(species,levels = species_order),fill=phylum))+
+  geom_bar(stat = "identity")+
+  #geom_errorbar(aes(ymin=log_foldchange-se,ymax=log_foldchange+se))+
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+```
+
+
+
+Run ancombc, between groups of soil layers:
+
+```{r}
+ancombc_depth_group = ancombc(phyloseq = pseq, formula = "group", zero_cut = 1.1, group = "group", struc_zero = TRUE)
+```
+
+

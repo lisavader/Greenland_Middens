@@ -19,7 +19,7 @@ theme_set(theme_bw())
 
 Import disk usage data
 ```{r}
-du <- read.delim("du_reads.txt", header = FALSE)
+du <- read.delim("../du_reads.txt", header = FALSE)
 names(du) <- c("space_kb","file_name")
 #remove ./ before file name
 du %<>% mutate(file_name=sub("./","",file_name,fixed = TRUE))
@@ -60,7 +60,7 @@ sample_sizes %>% arrange(total_gb) %>% head(n=5)
 Add metadata
 
 ```{r}
-metadata <- read.delim("Middens_2020_metadata.location.txt", header = TRUE)
+metadata <- read.delim("../Middens_2020_metadata.location.txt", header = TRUE)
 sample_info <- left_join(sample_sizes,metadata)
 ```
 How many samples at each location?
