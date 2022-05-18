@@ -10,61 +10,89 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include=FALSE}
-packages <- c("dplyr","magrittr","ggplot2")
+packages <- c("dplyr","magrittr","ggplot2","stringr")
 for (package in packages){
   if (!require(package, character.only = TRUE)) install.packages(package)
   require(package, character.only = TRUE)
 }
 ```
 
+```{r}
+theme_set(theme_bw())
+```
+
 Download assembly statistics
 
 ```{r}
-stats_short <- read.delim("quast/metaspades/transposed_report.tsv") %>% mutate(reads='short')
-stats_long <- read.delim("quast/metaflye/transposed_report.tsv") %>% mutate(reads='long')
-stats_hybrid <- read.delim("quast/hybrid_metaspades/transposed_report.tsv") %>% mutate(reads='hybrid')
-stats_hybrid_contigs <- read.delim("quast/hybrid_metaspades_contigs/transposed_report.tsv") %>% mutate(reads='hybrid_contigs')
+stats_short <- read.delim("quast/metaspades/transposed_report.tsv") %>% mutate(method='SPAdes',reads='short')
+stats_long <- read.delim("quast/metaflye/transposed_report.tsv") %>% mutate(method='Flye',reads='long')
+stats_hybrid <- read.delim("quast/hybrid_metaspades/transposed_report.tsv") %>% mutate(method='SPAdes --nanopore',reads='hybrid')
+stats_hybrid_contigs <- read.delim("quast/hybrid_metaspades_contigs/transposed_report.tsv") %>% mutate(method='SPAdes --trusted-contigs',reads='hybrid')
+stats_merged <- read.delim("quast/merged_long_hybrid/transposed_report.tsv") %>% mutate(method='SPAdes --trusted-contigs + Flye',reads='hybrid')
 ```
 
 Merge
 ```{r}
-stats_all <- rbind(stats_short,stats_long,stats_hybrid,stats_hybrid_contigs)
+stats_all <- rbind(stats_short,stats_long,stats_hybrid,stats_hybrid_contigs,stats_merged)
 ```
 
 Boxplots
 
+for saving
 ```{r}
-reads_order<-c("long","short","hybrid","hybrid_contigs")
-ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=X..contigs))+
-  geom_boxplot()+
-  geom_point()
+ggsave("name.png",width=7,height = 4)
 ```
+
+
 ```{r}
-ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=Total.length))+
+method_order<-c("Flye","SPAdes","SPAdes --nanopore","SPAdes --trusted-contigs","SPAdes --trusted-contigs + Flye")
+ggplot(stats_all,aes(x=factor(method, levels=method_order),y=X..contigs,colour=reads))+
   geom_boxplot()+
-  geom_point()
+  geom_point()+
+  labs(y="Nr. of contigs",x="Assembly method")+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 18))+
+  scale_colour_manual(values=c("purple","blue","red"))
 ```
 
 ```{r}
-ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=Largest.contig))+
+ggplot(stats_all ,aes(x=factor(method, levels=method_order),y=Total.length,colour=reads))+
   geom_boxplot()+
-  geom_point()
-```
-```{r}
-ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=N50))+
-  geom_boxplot()+
-  geom_point()
+  geom_point()+
+  labs(y="Total length",x="Assembly method")+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 18))+
+  scale_colour_manual(values=c("purple","blue","red"))
 ```
 
 ```{r}
-ggplot(stats_all %>% filter(reads!="long"),aes(x=factor(reads, levels=reads_order),y=N50))+
+ggplot(stats_all ,aes(x=factor(method, levels=method_order),y=Largest.contig,colour=reads))+
   geom_boxplot()+
-  geom_point()
+  geom_point()+
+  labs(y="Largest contig",x="Assembly method")+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 18))+
+  scale_colour_manual(values=c("purple","blue","red"))
+```
+```{r}
+ggplot(stats_all,aes(x=factor(method, levels=method_order),y=N50,colour=reads))+
+  geom_boxplot()+
+  geom_point()+
+  labs(y="N50",x="Assembly method")+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 18))+
+  scale_colour_manual(values=c("purple","blue","red"))
 ```
 
 ```{r}
-ggplot(stats_all,aes(x=factor(reads, levels=reads_order),y=L50))+
+ggplot(stats_all %>% filter(method!="Flye"),aes(x=factor(method, levels=method_order),y=N50,colour=reads))+
   geom_boxplot()+
-  geom_point()
+  geom_point()+
+  labs(y="N50",x="Assembly method")+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 18))
+```
+
+```{r}
+ggplot(stats_all,aes(x=factor(method, levels=method_order),y=L50,colour=reads))+
+  geom_boxplot()+
+  geom_point()+
+  labs(y="L50",x="Assembly method")+
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 18))
 ```
 
