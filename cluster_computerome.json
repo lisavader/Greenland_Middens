@@ -1,0 +1,220 @@
+{
+    "__default__" :
+    {
+        "core" : "1",
+        "time" : "10:00:00",
+        "vmem" : "60G",
+        "proj" : "cge"
+    },
+    "bowtie_phylonorway" :
+    {
+        "core" : "12",
+        "time" : "8:00:00",
+        "vmem" : "60G",
+        "proj" : "cge"
+    },
+    "bowtie_nt" :
+    {
+        "core" : "6",
+        "time" : "8:00:00",
+        "vmem" : "30G",
+        "proj" : "cge"
+    },
+    "best_hit" :
+    {
+        "core" : "1",
+        "time" : "8:00:00",
+        "vmem" : "20G",
+        "proj" : "cge"
+    },  
+    "raw_count" :
+    {
+        "core" : "1",
+        "time" : "8:00:00",
+        "vmem" : "20G",
+        "proj" : "cge"
+    },
+    "filter_bowtie_hits" :
+    {
+        "core" : "1",
+        "time" : "2:00:00",
+        "vmem" : "20M",
+        "proj" : "cge"
+    },   
+    "merge_long_hybrid" :
+    {
+        "core" : "8",
+        "time" : "16:00:00",
+        "vmem" : "15G",
+        "proj" : "cge"
+    },
+        "checkm" :
+    {
+        "core" : "20",
+        "time" : "48:00:00",
+        "vmem" : "80G",
+        "proj" : "cge"
+    },
+    "metabat2" :
+    {
+        "core" : "20",
+        "time" : "24:00:00",
+        "vmem" : "40G",
+        "proj" : "cge"
+    },
+    "kma_resfinder" :
+    {
+        "core" : "1",
+        "time" : "04:00:00",
+        "vmem" : "12G",
+        "proj" : "cge"
+    },
+    "kma_bacteria" :
+    {
+        "core" : "20",
+        "time" : "12:00:00",
+        "vmem" : "180G",
+        "proj" : "cge"
+    },
+    "kma_silva_longreads" :
+    {
+        "core" : "10",
+        "time" : "02:00:00",
+        "vmem" : "40G",
+        "proj" : "cge"
+    },
+    "trim_bbduk" :
+    {
+        "core" : "20",
+        "time" : "04:00:00",
+        "vmem" : "20G",
+        "proj" : "cge"
+    },
+    "map_bbmap" :
+    {
+        "core" : "20",
+        "time" : "04:00:00",
+        "vmem" : "40G",
+        "proj" : "cge"
+    },
+    "asm_megahit" :
+    {
+        "core" : "40",
+        "time" : "7:00:00:00",
+        "vmem" : "1400G",
+        "proj" : "cge"
+    },
+    "asm_metaspades" :
+    {
+        "core" : "20",
+        "time" : "7:00:00:00",
+        "vmem" : "700G",
+        "proj" : "cge"
+    },
+    "hybrid_asm_metaspades" :
+    {
+        "core" : "20",
+        "time" : "7:00:00:00",
+        "vmem" : "700G",
+        "proj" : "cge"
+    },
+    "hybrid_asm_metaspades_contigs" :
+    {
+        "core" : "20",
+        "time" : "7:00:00:00",
+        "vmem" : "700G",
+        "proj" : "cge"
+    },
+    "asm_metaflye" :
+    {
+        "core" : "20",
+        "time" : "7:00:00:00",
+        "vmem" : "700G",
+        "proj" : "cge"
+    },
+    "mash_sketch" :
+    {
+        "core" : "1",
+        "time" : "12:00:00",
+        "vmem" : "4G",
+        "proj" : "cge"
+    },
+    "drep_all" :
+    {
+        "core" : "40",
+        "time" : "7:00:00:00",
+        "vmem" : "180G",
+        "proj" : "cge"
+    },
+    "coassembly" :
+    {
+        "core" : "40",
+        "time" : "365:00:00:00",
+        "vmem" : "180G",
+        "proj" : "cge"
+    },
+    "contig_resfinder" :
+    {
+        "core" : "2",
+        "time" : "12:00:00",
+        "vmem" : "8G",
+        "proj" : "cge"
+    },
+    "fastqc" :
+    {
+        "core" : "2",
+        "time" : "12:00:00",
+        "vmem" : "8G",
+        "proj" : "cge"
+    },
+    "metaquast_short" :
+    {
+        "core" : "4",
+        "time" : "4:00:00",
+        "vmem" : "10G",
+        "proj" : "cge"
+    },
+    "metaquast_long" :
+    {
+        "core" : "4",
+        "time" : "4:00:00",
+        "vmem" : "10G",
+        "proj" : "cge"
+    },
+    "metaquast_hybrid" :
+    {
+        "core" : "4",
+        "time" : "4:00:00",
+        "vmem" : "10G",
+        "proj" : "cge"
+    },
+    "metaquast_hybrid_contigs" :
+    {
+        "core" : "4",
+        "time" : "4:00:00",
+        "vmem" : "10G",
+        "proj" : "cge"
+    },
+    "metaquast_merged" :
+    {
+        "core" : "4",
+        "time" : "4:00:00",
+        "vmem" : "10G",
+        "proj" : "cge"
+    },
+   "kma_resfinder" :
+    {
+        "core" : "1",
+        "time" : "04:00:00",
+        "vmem" : "12G",
+        "proj" : "cge"
+    },
+    "mefinder" :
+    {
+        "core" : "4",
+        "time" : "12:00:00",
+        "vmem" : "185G",
+        "proj" : "cge"
+    },
+
+}

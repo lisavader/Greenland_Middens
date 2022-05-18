@@ -1,16 +1,32 @@
-#hpc files
-cluster_computerome.json
-clusterIO
+#Ignore everything
+*
+# Descend into directories
+!*/
+
+# Ignore these directories:
 Greenland_HOPS
 Greenland_KMA_mapping
-midden_analysis_KMA
-public_midden_KMA
-Snakefile
-snjob.sh
-trimReads
 
-#R specific files
-.Rproj.user
-Greenland_Middens.Rproj
-.RData
-.Rhistory
+# Allow:
+!bowtie/**/*rawCount.csv
+!bowtie/DTU_2021_1010055_1_MG_Nuuk_ID69_S1_StV23C_0_5_inf1_S0_L001/*Count	#testsample
+!Bowtie_Pipeline
+!cluster_computerome.json
+!commands/**
+!du_reads.txt
+!Hybrid_Assembly_Pipeline
+!krona/longread/output/**
+!krona/shortread/output/**
+!LICENSE
+!mefinder.config.ini
+!Mefinder_Snakemake
+!Middens_2020_metadata.location.txt
+!quast/**
+quast/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_S0_L001
+!readcount/**
+!README.md
+!R_scripts/**
+!scripts/**
+!snjob.sh
+!taxa_comparison/**
+
