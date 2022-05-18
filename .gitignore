@@ -22,6 +22,7 @@ Greenland_KMA_mapping
 !Mefinder_Snakemake
 !Middens_2020_metadata.location.txt
 !quast/**
+quast/DTU_2021_1010001_1_MG_Nar_ID2_SFA_P1_5_10_S0_L001
 !readcount/**
 !README.md
 !R_scripts/**
