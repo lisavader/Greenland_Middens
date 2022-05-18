@@ -9,6 +9,7 @@ Greenland_KMA_mapping
 
 # Allow:
 !bowtie/**/*rawCount.csv
+!bowtie/DTU_2021_1010055_1_MG_Nuuk_ID69_S1_StV23C_0_5_inf1_S0_L001/*Count	#testsample
 !Bowtie_Pipeline
 !cluster_computerome.json
 !commands/**
