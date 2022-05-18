@@ -1,0 +1,344 @@
+import os
+
+# Find sample ids
+
+ILLUMINA_IDS, = glob_wildcards("trimReads/{id}_R1_001.singletons.fq.gz")
+
+NANOPORE_IDS, = glob_wildcards("rawReadsNanopore/{id}_SE.fq.gz")
+
+## Target rules:
+
+# Assembly
+
+rule all_metaflye:
+	input: expand("metaflye/{sample}/{sample}_assembly.fasta", sample=NANOPORE_IDS)
+
+rule all_metaspades:
+        input: expand("metaspades/{sample}/{sample}_scaffolds.fasta", sample=ILLUMINA_IDS)
+
+rule all_hybrid_metaspades:
+	input: expand("hybrid_metaspades/{sample}/{sample}_scaffolds.fasta", sample=NANOPORE_IDS)
+
+rule all_hybrid_metaspades_contigs:
+	input: expand("hybrid_metaspades_contigs/{sample}/{sample}_scaffolds.fasta", sample=NANOPORE_IDS)
+
+rule all_merge_long_hybrid:
+	input: expand("merged_long_hybrid/{sample}/{sample}_assembly.fasta.gz", sample=NANOPORE_IDS)
+
+# Taxonomic assignment and visualisation
+
+rule all_kma_silva_longreads:
+	input: expand("KMA_Silva_longreads/{sample}.mapstat", sample=NANOPORE_IDS)
+
+rule all_krona_shortreads:
+	input: expand("krona/shortread/output/{sample}_krona_Silva.html", sample=ILLUMINA_IDS)
+
+rule all_krona_longreads:
+	input: expand("krona/longread/output/{sample}_krona_Silva.html", sample=NANOPORE_IDS)
+
+rule all_taxa_comparison:
+	input: expand("taxa_comparison/{sample}/longread_unique_taxa.csv", sample=NANOPORE_IDS)
+
+## General rules:
+
+# Short-read assembly with MetaSPAdes
+rule asm_metaspades:
+    	input:
+        	R1="trimReads/{id}_R1_001.trim.fq.gz",
+        	R2="trimReads/{id}_R2_001.trim.fq.gz",
+        	RS="trimReads/{id}_R1_001.singletons.fq.gz"
+    	output:
+        	fa="metaspades/{id}/{id}_scaffolds.fasta"
+	params:
+        	dir="metaspades/{id}",
+        	asm="metaspades/{id}/scaffolds.fasta",
+		time="time/metaspades/{id}.time"
+	log:
+		out="logs/asm_metaspades/{id}.out",
+		err="logs/asm_metaspades/{id}.err"
+	benchmark:
+		"benchmarks/{id}.metaspades.bm.txt"
+	threads: 20
+	shell:
+        	'''
+		module load tools
+		module load anaconda3/4.4.0
+        	module load spades/3.13.0
+    		/usr/bin/time -v -o {params.time} metaspades.py --debug -t {threads} -1 {input.R1} -2 {input.R2} -s {input.RS} -o {params.dir} -k 27,47,67,87,107,127 --memory 700 2> {log.err} 1> {log.out}
+		mv {params.asm} {output.fa}
+        	'''
+
+# Hybrid assembly with MetaSPAdes
+rule hybrid_asm_metaspades:
+    	input:
+        	R1="trimReads/{id}_S0_L001_R1_001.trim.fq.gz",
+        	R2="trimReads/{id}_S0_L001_R2_001.trim.fq.gz",
+        	RS="trimReads/{id}_S0_L001_R1_001.singletons.fq.gz", 
+		nanopore="rawReadsNanopore/{id}_SE.fq.gz"
+    	output:
+        	fa="hybrid_metaspades/{id}/{id}_scaffolds.fasta"
+	params:
+        	dir="hybrid_metaspades/{id}",
+        	asm="hybrid_metaspades/{id}/scaffolds.fasta",
+		time="time/hybrid_metaspades/{id}.time"
+	log:
+		out="logs/hybrid_asm_metaspades/{id}.out",
+		err="logs/hybrid_asm_metaspades/{id}.err"
+	benchmark:
+		"benchmarks/{id}.hybrid_metaspades.bm.txt"
+	threads: 20
+	shell:
+        	'''
+		module load tools
+		module load anaconda3/4.4.0
+        	module load spades/3.13.0
+    		/usr/bin/time -v -o {params.time} metaspades.py -t {threads} -1 {input.R1} -2 {input.R2} -s {input.RS} --nanopore {input.nanopore} -o {params.dir} -k 27,47,67,87,107,127 --memory 700 2> {log.err} 1> {log.out}
+		mv {params.asm} {output.fa}
+        	'''
+
+# Hybrid assembly with MetaSPAdes, use long-read assembled contigs instead of long reads
+rule hybrid_asm_metaspades_contigs:
+    	input:
+        	R1="trimReads/{id}_S0_L001_R1_001.trim.fq.gz",
+        	R2="trimReads/{id}_S0_L001_R2_001.trim.fq.gz",
+        	RS="trimReads/{id}_S0_L001_R1_001.singletons.fq.gz", 
+		contigs="metaflye/{id}/{id}_assembly.fasta"
+    	output:
+        	fa="hybrid_metaspades_contigs/{id}/{id}_scaffolds.fasta"
+	params:
+        	dir="hybrid_metaspades_contigs/{id}",
+        	asm="hybrid_metaspades_contigs/{id}/scaffolds.fasta",
+		time="time/hybrid_metaspades_contigs/{id}.time"
+	log:
+		out="logs/hybrid_asm_metaspades_contigs/{id}.out",
+		err="logs/hybrid_asm_metaspades_contigs/{id}.err"
+	benchmark:
+		"benchmarks/{id}.hybrid_metaspades_contigs.bm.txt"
+	threads: 20
+	shell:
+        	'''
+		module load tools
+		module load anaconda3/4.4.0
+        	module load spades/3.15.3
+    		/usr/bin/time -v -o {params.time} metaspades.py -t {threads} -1 {input.R1} -2 {input.R2} -s {input.RS} --trusted-contigs {input.contigs} -o {params.dir} -k 27,47,67,87,107,127 --memory 700 2> {log.err} 1> {log.out}
+		mv {params.asm} {output.fa}
+        	'''
+
+# Long-read assembly with metaFlye
+rule asm_metaflye:
+	input:
+		fq="rawReadsNanopore/{id}_SE.fq.gz"
+	output:
+		fa="metaflye/{id}/{id}_assembly.fasta"
+	params:
+		outdir="metaflye/{id}",
+		asm="metaflye/{id}/assembly.fasta",
+		time="time/metaflye/{id}.time"
+	threads: 20
+	shell:
+		'''
+		module load tools ngs
+		module load anaconda3/4.4.0
+		module load flye/2.9
+		/usr/bin/time -v -o {params.time} flye --nano-hq {input.fq} --out-dir {params.outdir} --meta
+		mv {params.asm} {output.fa}
+		'''
+
+# Quality assessment of assemblies with MetaQUAST
+rule metaquast_long:
+	input:
+		fa=expand("metaflye/{sample}/{sample}_assembly.fasta", sample=NANOPORE_IDS)
+	output:
+		html="quast/metaflye/report.html"
+	params:
+		dir="quast/metaflye"
+	threads: 4
+	shell:
+		'''
+		module load tools ngs
+		module load perl
+		module load anaconda/4.4.0
+		module load quast/5.0.2
+		metaquast.py {input.fa} -o {params.dir} -t {threads} --max-ref-num 0 --min-contig 1000
+		'''
+
+rule metaquast_short:
+	input:
+		fa=expand("metaspades/{sample}_S0_L001/{sample}_S0_L001_scaffolds.fasta", sample=NANOPORE_IDS)
+	output:
+		html="quast/metaspades/report.html"
+	params:
+		dir="quast/metaspades"
+	threads: 4
+	shell:
+		'''
+		module load tools ngs
+		module load perl
+		module load anaconda/4.4.0
+		module load quast/5.0.2
+		metaquast.py {input.fa} -o {params.dir} -t {threads} --max-ref-num 0 --min-contig 1000
+		'''
+
+rule metaquast_hybrid:
+	input:
+		fa=expand("hybrid_metaspades/{sample}/{sample}_scaffolds.fasta", sample=NANOPORE_IDS)
+	output:
+		html="quast/hybrid_metaspades/report.html"
+	params:
+		dir="quast/hybrid_metaspades"
+	threads: 4
+	shell:
+		'''
+		module load tools ngs
+		module load perl
+		module load anaconda/4.4.0
+		module load quast/5.0.2
+		metaquast.py {input.fa} -o {params.dir} -t {threads} --max-ref-num 0 --min-contig 1000
+		'''
+
+rule metaquast_hybrid_contigs:
+	input:
+		fa=expand("hybrid_metaspades_contigs/{sample}/{sample}_scaffolds.fasta", sample=NANOPORE_IDS)
+	output:
+		html="quast/hybrid_metaspades_contigs/report.html"
+	params:
+		dir="quast/hybrid_metaspades_contigs"
+	threads: 4
+	shell:
+		'''
+		module load tools ngs
+		module load perl
+		module load anaconda/4.4.0
+		module load quast/5.0.2
+		metaquast.py {input.fa} -o {params.dir} -t {threads} --max-ref-num 0 --min-contig 1000
+		'''
+
+rule metaquast_merged:
+	input:
+		fa=expand("merged_long_hybrid/{sample}/{sample}_assembly.fasta.gz", sample=NANOPORE_IDS)
+	output:
+		html="quast/merged_long_hybrid/report.html"
+	params:
+		dir="quast/merged_long_hybrid"
+	threads: 4
+	shell:
+		'''
+		module load tools ngs
+		module load perl
+		module load anaconda/4.4.0
+		module load quast/5.0.2
+		metaquast.py {input.fa} -o {params.dir} -t {threads} --max-ref-num 0 --min-contig 1000
+		'''
+
+# Map reads to Silva with KMA
+rule kma_silva_longreads:
+	input:
+		nanopore="rawReadsNanopore/{id}_SE.fq.gz"
+	output:
+		mapstat="KMA_Silva_longreads/{id}.mapstat"
+	params:
+		output="KMA_Silva_longreads/{id}",
+		db="/home/databases/metagenomics/db/Silva_20200116/Silva_20200116",
+		time="time/kma_silva_longreads/{id}.time"
+	threads: 10
+	shell:
+		'''
+		module load tools ngs anaconda3/4.4.0
+		/usr/bin/time -v -o {params.time} /home/projects/cge/apps/kma/1.2.10b/kma/kma -i {input.nanopore} -o {params.output} -t_db {params.db} -bcNano -bc 0.7 -t {threads} -mem_mode -ef -1t1 -apm f -nf -nc
+		'''
+	
+
+# Visualise KMA alignments to Silva database with Krona 
+rule krona_shortreads:
+	input:
+		mapstat="Greenland_KMA_mapping/output/Silva_20200116/Silva_20200116__{id}_R1_001.mapstat"
+	output:
+		html="krona/shortread/output/{id}_krona_Silva.html"	
+	params:
+		krona_input="krona/shortread/txt/{id}_krona_Silva_input.txt",
+		sample="{id}"
+	shell:
+		'''
+		module load tools ngs anaconda3/4.4.0
+		module load kronatools/2.7.1
+		python scripts/build_krona_input.py {input.mapstat} {params.sample} {params.krona_input}
+		ktImportText {params.krona_input} -o {output.html}
+		'''
+
+rule krona_longreads:
+	input:
+		mapstat="mapstat_Silva_longreads/{id}.mapstat"
+	output:
+		html="krona/longread/output/{id}_krona_Silva.html"	
+	params:
+		krona_input="krona/longread/txt/{id}_krona_Silva_input.txt",
+		sample="{id}"
+	shell:
+		'''
+		module load tools ngs anaconda3/4.4.0
+		module load kronatools/2.7.1
+		python scripts/build_krona_input.py {input.mapstat} {params.sample} {params.krona_input}
+		ktImportText {params.krona_input} -o {output.html}
+		'''
+
+rule krona_multisample:
+	output:
+		html="krona/multisample/output/{query}_krona_Silva.html"
+	params:
+		input_dir="Greenland_KMA_mapping/output/Silva_20200116",
+		query="{query}",
+		krona_input="krona/multisample/txt/{query}_krona_Silva_input.txt"
+	shell:
+		'''
+		module load tools ngs anaconda3/4.4.0
+		module load kronatools/2.7.1
+		python scripts/merge_samples_krona.py {params.input_dir} {params.query} {params.krona_input}
+		ktImportText {params.krona_input} -o {output.html}
+		'''
+
+# Examine overlap in taxa between short- and longreads
+rule taxa_comparison:
+	input:
+		sr="Greenland_KMA_mapping/output/Silva_20200116/Silva_20200116__{id}_S0_L001_R1_001.res",
+		lr="mapstat_Silva_longreads/{id}.res"
+	output:
+		csv="taxa_comparison/{id}/longread_unique_taxa.csv"
+	params:
+		dir="taxa_comparison/{id}"
+	shell:
+		'''
+		module load tools ngs anaconda3/4.4.0
+		python scripts/get_species_overlap.py {input.lr} {input.sr} {params.dir}
+		''' 
+
+# Merge long-read and hybrid assembly
+rule merge_long_hybrid:
+	input:
+		metaflye="metaflye/{sample}/{sample}_assembly.fasta.gz",
+		hybrid="hybrid_metaspades_contigs/{sample}/{sample}_scaffolds.fasta.gz"
+	output:
+		merged="merged_long_hybrid/{sample}/{sample}_assembly.fasta.gz"
+	params:
+		cdhit_out="cd-hit_long2hybrid/{sample}/dissimilar_sequences.fasta",
+		cdhit_dir="cd-hit_long2hybrid/{sample}/",
+		time="time/cd-hit/{sample}.time"
+	log:
+		out="logs/cd-hit/{sample}.out",
+		err="logs/cd-hit/{sample}.err"
+	shell:
+		'''
+		module load tools ngs perl
+		module load ncbi-blast/2.12.0+
+		module load cd-hit/4.8.1
+		module load pigz/2.3.4
+		#make output dir
+		mkdir -p {params.cdhit_dir}
+		#run cd-hit to find long-read contigs missing from the hybrid assembly	
+		/usr/bin/time -v -o {params.time} cd-hit-est-2d -i {input.hybrid} -i2 {input.metaflye} -o {params.cdhit_out} -M 0 -T 0 -c 0.95 1> {log.out} 2> {log.err}
+		#gzip the output
+		pigz {params.cdhit_out} 
+		#merge long-read and hybrid contigs
+		cat {params.cdhit_out}.gz {input.hybrid} > {output.merged}
+		'''
+
+

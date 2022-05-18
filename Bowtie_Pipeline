@@ -1,0 +1,136 @@
+import os
+
+# Find sample ids
+
+ILLUMINA_IDS, = glob_wildcards("trimReads/{id}_R1_001.singletons.fq.gz")
+
+NUUK_IDS = [x for x in ILLUMINA_IDS if "Nuuk" in x]
+
+MIDDEN_IDS = [x for x in NUUK_IDS if "mid" in x]
+
+chunks_nt = [str(x).zfill(2) for x in list(range(0,55))]
+chunks_phylonorway = list(range(1,8))
+
+## Target rules:
+
+# Bowtie
+
+rule bowtie_phylonorway_nuuk:
+	input: expand("bowtie/{sample}/{sample}.PhyloNorway_{i}.mapTo.bam", sample=NUUK_IDS, i=chunks_phylonorway)
+
+rule bowtie_nt_nuuk:
+	input: expand("bowtie/{sample}/{sample}.nt_{i}.mapTo.bam", sample=NUUK_IDS, i=chunks_nt)
+
+# Find best hits
+
+rule best_hit_nuuk:
+	input: expand("bowtie/{sample}/{sample}.PhyloNorway_7.bestHit.bam", sample=NUUK_IDS)
+
+rule best_hit_midden:	
+	input: expand("bowtie/{sample}/{sample}.PhyloNorway_{i}.bestHit.bam", sample=MIDDEN_IDS, i=chunks_phylonorway)
+
+# Filter hits
+
+rule filter_nuuk:
+	input: expand("bowtie/{sample}/{sample}.nt_{i}.bestHit.filtered.bam", sample=NUUK_IDS, i=chunks_nt), expand("bowtie/{sample}/{sample}.PhyloNorway_{i}.bestHit.filtered.bam", sample=NUUK_IDS, i=chunks_phylonorway)
+
+rule filter_midden:
+	input: expand("bowtie/{sample}/{sample}.nt_{i}.bestHit.filtered.bam", sample=MIDDEN_IDS, i=chunks_nt), expand("bowtie/{sample}/{sample}.PhyloNorway_{i}.bestHit.filtered.bam", sample=MIDDEN_IDS, i=chunks_phylonorway)
+
+# Count organisms
+
+rule count_nuuk:
+	input: expand("bowtie/{sample}/{sample}.rawCount.csv", sample=NUUK_IDS)
+
+rule count_midden:
+	input: expand("bowtie/{sample}/{sample}.rawCount.csv", sample=MIDDEN_IDS)
+
+## General rules:
+
+# Map reads with bowtie
+rule bowtie_phylonorway:
+	input:
+		R1="trimReads/{sample}_R1_001.trim.fq.gz",
+        	R2="trimReads/{sample}_R2_001.trim.fq.gz"
+	output:
+		bam="bowtie/{sample}/{sample}.PhyloNorway_{i}.mapTo.bam"
+	params:
+		db="/home/databases/metagenomics/db/PhyloNorway/PhyloNorwayContigs_{i}",
+		time="time/bowtie/{sample}_{i}.time"
+	threads: 12
+	shell:
+		'''
+		module load tools ngs
+		module load bowtie2/2.4.2
+		module load samtools/1.14
+		/usr/bin/time -v -o {params.time} bowtie2 -x {params.db} -1 {input.R1} -2 {input.R2} --local --no-unal -p {threads} | samtools view -h -Sb > {output.bam}
+		'''
+
+rule bowtie_nt:
+	input:
+		R1="trimReads/{sample}_R1_001.trim.fq.gz",
+        	R2="trimReads/{sample}_R2_001.trim.fq.gz"
+	output:
+		bam="bowtie/{sample}/{sample}.nt_{i}.mapTo.bam"
+	params:
+		db="/home/databases/metagenomics/db/nt_20220208/nt.{i}",
+		time="time/bowtie/{sample}.nt_{i}.time"
+	threads: 6
+	shell:
+		'''
+		module load tools ngs
+		module load bowtie2/2.4.2
+		module load samtools/1.14
+		/usr/bin/time -v -o {params.time} bowtie2 -x {params.db} -1 {input.R1} -2 {input.R2} --local --no-unal -p {threads} | samtools view -h -Sb > {output.bam}
+		'''
+
+# Save best hits
+rule best_hit:
+	input:
+		expand("bowtie/{{sample}}/{{sample}}.nt_{i}.mapTo.bam", i=chunks_nt), expand("bowtie/{{sample}}/{{sample}}.PhyloNorway_{i}.mapTo.bam", i=chunks_phylonorway)	
+	output:
+		expand("bowtie/{{sample}}/{{sample}}.nt_{i}.bestHit.bam", i=chunks_nt), expand("bowtie/{{sample}}/{{sample}}.PhyloNorway_{i}.bestHit.bam", i=chunks_phylonorway)
+	params:
+		sample="{sample}",
+		dir="bowtie/{sample}",
+		fc="bowtie/{sample}/{sample}.fragmentCount",
+		time="time/bowtie/{sample}.bestHit.time"
+	log:
+		"logs/besthit/{sample}.log"
+	shell:
+		'''
+		module load tools ngs perl samtools/1.14
+		/usr/bin/time -v -o {params.time} scripts/best_hit.pl -i {params.sample} -d {params.dir} -l {log} -o {params.fc}
+		'''	
+
+
+# Filter the hits
+rule filter_bowtie_hits:
+	input:
+		"bowtie/{sample}/{sample}.{db}_{i}.bestHit.bam"
+	output:
+		"bowtie/{sample}/{sample}.{db}_{i}.bestHit.filtered.bam"
+	params:
+		time="time/bowtie/{sample}_{i}.bestHit.filtered.time",
+		tmp="bowtie/{sample}/{sample}.{db}_{i}.tmp"
+	shell:
+		'''
+		module load tools ngs python36 samtools/1.14
+		/usr/bin/time -v -o {params.time} python scripts/filter_best_hits.py -i 0.9 -c 0.8 {input} {params.tmp}
+		mv {params.tmp} {output}
+		'''
+# Get raw counts per organism
+rule raw_count:
+	input:
+		expand("bowtie/{{sample}}/{{sample}}.nt_{i}.bestHit.filtered.bam", i=chunks_nt), expand("bowtie/{{sample}}/{{sample}}.PhyloNorway_{i}.bestHit.filtered.bam", i=chunks_phylonorway)	
+	output:
+		"bowtie/{sample}/{sample}.rawCount.csv"
+	params:
+		dir="bowtie/{sample}",
+		time="time/bowtie/{sample}.rawCount.time",
+		config="/home/people/lisvad/.my.cnf"
+	shell:
+		'''
+		module load tools ngs python36 samtools/1.14
+		/usr/bin/time -v -o {params.time} python scripts/count_organisms.py -c {params.config} -d {params.dir} -s filtered.bam all {output}
+		'''	

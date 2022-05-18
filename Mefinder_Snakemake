@@ -1,0 +1,34 @@
+
+# Find sample ids
+
+ILLUMINA_IDS, = glob_wildcards("trimReads/{id}_R1_001.singletons.fq.gz")
+
+NANOPORE_IDS, = glob_wildcards("rawReadsNanopore/{id}_SE.fq.gz")
+
+
+# Predict mobile genetic elements with MobileElementFinder
+rule mefinder:
+	input:
+		fa="metaspades/{id}_S0_L001/{id}_S0_L001_scaffolds.fasta.gz"
+	output:
+		csv="mefinder/{id}/{id}.csv"
+	params:
+		output="mefinder/{id}/{id}",
+		tmp="mefinder/tmp",
+		time="time/mefinder/{id}.time",
+		config="mefinder.config.ini",
+		gunzip="metaspades/{id}_S0_L001/{id}_S0_L001_scaffolds.fasta"
+	log:	
+		out="logs/mefinder/{id}.out",
+		err="logs/mefinder/{id}.err"
+	
+	threads: 4
+	shell:
+		'''
+		module load ngs tools anaconda3/2020.07 perl/5.24.0 git/2.14.2 ncbi-blast/2.12.0+ kma/20190719
+		module load pigz/2.3.4
+		unpigz {input.fa}	
+		/usr/bin/time -v -o {params.time} /home/projects/cge/apps/mobile_element_finder/mobileElementFinder.py find --contig {params.gunzip} -t {threads} --gff --temp-dir {params.tmp} --config {params.config} {params.output} 1> {log.out} 2> {log.err}
+		pigz {params.gunzip}
+		'''
+
