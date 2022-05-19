@@ -74,6 +74,17 @@ ggplot(sample_info,aes(x=displ_cat,fill=place))+
 ```
 NA = control or sheep feces
 
+```{r}
+metadata_middens <- metadata %>% filter(place=="Nuuk" | place=="Qajaa") %>% mutate(place_type=paste(place,s_type,sep = " - ")) %>% filter(!is.na(displ_cat))
+```
+
+
+```{r}
+ggplot(metadata_middens,aes(x=displ_cat,fill=place_type))+
+  geom_histogram(stat = "count")+
+  labs(x="Depth (cm)",y="Nr. of samples",fill="Place - soil type")
+```
+
 For which samples do we have nanopore data?
 
 13 samples from Nuuk:
