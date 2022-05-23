@@ -42,7 +42,10 @@ set.seed(50)
 soil_char_order <- c("root layer","vegetal","run off","middenish","wood","burn off","black layer","midden","sediment","midden deposits ","permafrost")
 ggplot(middendata,aes(y=displacement,x=rnorm(nrow(middendata)),colour=factor(soil_char,levels=soil_char_order)))+
   geom_point(size=2)+
-  scale_y_reverse()
+  scale_y_reverse(limits=c(75,0))+
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())+
+  labs(x=NULL,y="Depth (cm)",colour="Metadata label")
 ```
 
 Possible groups:
