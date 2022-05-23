@@ -7,7 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "../bowtie/DTU_2021_1010055_1_MG_Nuuk_ID69_S1_StV23C_0_5_inf1_S0_L001/")
 ```
 
 ```{r, include=FALSE}
@@ -27,7 +26,8 @@ Import counts
 
 ```{r}
 #read files into list of dataframes (one for each file)
-filelist <- list.files(pattern="PhyloNorway")
+filelist <- list.files(path="../bowtie/DTU_2021_1010055_1_MG_Nuuk_ID69_S1_StV23C_0_5_inf1_S0_L001/", pattern="PhyloNorway")
+filelist = paste0("../bowtie/DTU_2021_1010055_1_MG_Nuuk_ID69_S1_StV23C_0_5_inf1_S0_L001/",filelist)
 files = lapply(filelist, read_csv,col_names = c("name","count"))
 files = lapply(files,as.data.frame)
 
@@ -42,11 +42,11 @@ all_counts <- bind_rows(files)
 
 Get list of recognized flora of Greenland (includes species, genus and family)
 ```{r}
-known_flora <- read_file("../../wikipage_list_of_flora_of_greenland.txt")
+known_flora <- read_file("../wikipage_list_of_flora_of_greenland.txt")
 #some families that aren't included in the original list:
-added_families <- read_file("../../Greenland_families_extended.txt")
+added_families <- read_file("../Greenland_families_extended.txt")
 #add order level:
-added_orders <- read_file("../../Greenland_orders.txt")
+added_orders <- read_file("../Greenland_orders.txt")
 
 #combine the files:
 known_flora_complete <- paste(known_flora,added_families,added_orders)
@@ -73,13 +73,14 @@ filtering_labels <- c("bestHit" = "no filter","filtered590" = "CV:50 ID:90","fil
 ```
 
 ```{r}
-ggplot(all_counts ,aes(x=factor(tax_level,levels = order_tax_level)))+
+ggplot(all_counts %>% filter(tax_level!="species"),aes(x=factor(tax_level,levels = order_tax_level)))+
   geom_bar(aes(fill=factor(expected,levels = order_expected)))+
   facet_grid(~ factor(type,levels=order_type),labeller = as_labeller(filtering_labels))+
   scale_fill_manual(values=c("#acabac","#714c8b","#F6C030"))+
   guides(fill=guide_legend(reverse = TRUE))+
-  labs(fill="Included in flora of Greenland",x="Dataset",y="Nr. of unique taxa")+
-  scale_x_discrete(labels=c("gen","fam","ord"))
+  labs(fill="Included in flora list",x="Dataset",y="Nr. of unique taxa")+
+  scale_x_discrete(labels=c("genus","family","order"))+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 ```
 
 ```{r}
@@ -99,10 +100,11 @@ expected_yes_no <- all_counts %>% filter(tax_level=="genus",expected!="unknown")
 
 ```{r}
 ggplot(expected_yes_no %>% filter(type!="bestHit"), aes(x=no,y=yes,colour=type))+
-  geom_point(size=2)+
+  geom_point(size=3)+
   geom_abline()+
   xlim(40,140)+
   ylim(40,140)+
+  labs(x="Genera not in flora list",y="Genera in flora list",colour="Filtering applied")+
   scale_colour_manual(breaks=order_type[-1],labels=c("CV:50 ID:90","CV:60 ID:90","CV:70 ID:90","CV:80 ID:90","CV:90 ID:90","CV:50 ID:95","CV:60 ID:95","CV:70 ID:95","CV:80 ID:95","CV:90 ID:95"),values=c("#A3E5AC","#82C58E","#61A570","#408452","#1F6434","#A3D4E6","#84A7C5","#667AA5","#474C84","#281F63"))
 ```
 
