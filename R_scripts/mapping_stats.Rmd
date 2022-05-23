@@ -1,0 +1,89 @@
+---
+title: "Extent of mapping"
+author: "Lisa"
+date: "23/05/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, include=FALSE}
+packages <- c("dplyr","magrittr","stringr")
+for (package in packages){
+  if (!require(package, character.only = TRUE)) install.packages(package)
+  require(package, character.only = TRUE)
+}
+```
+
+```{r}
+theme_set(theme_bw())
+```
+
+Load in read counts
+```{r}
+readcount <- read.csv("../readcount/readCountIllumina.csv", header = FALSE)
+colnames(readcount) <- c("sample","reads","basepairs")
+```
+
+Get reads per sample
+```{r}
+reads_sample <- readcount %>% dplyr::select(sample,reads) %>% filter(grepl("trim",sample))
+reads_sample %<>% mutate(sample=sub("_S0_.*","",sample)) %>% group_by(sample) %>% mutate(reads=sum(reads)) %>% ungroup() %>% unique()
+```
+
+Load in alignment counts
+```{r}
+aln_sample <- read.csv("../alncount/aln_midden.csv") %>% mutate(sample=sub("_S0_L001","",sample))
+```
+
+Load metadata
+```{r}
+metadata <- read.delim("../Middens_2020_metadata.location.txt", header = TRUE)
+#add long id to metadata
+id_conversion <- read.delim("../id_conversion_table.tsv", header = TRUE)
+metadata %<>% left_join(id_conversion,by=c("sample_id"="short_id"))
+#select only midden samples
+middendata <- metadata %>% filter(s_type=="midden" & place=="Nuuk")
+#convert depth to numeric
+middendata %<>% mutate(displacement=as.numeric(displacement))
+```
+
+Merge files
+```{r}
+mapping_data <- left_join(aln_sample,reads_sample)
+#add metadata
+mapping_data %<>% left_join(middendata, by=c("sample" = "long_id"))
+```
+Examine average counts
+```{r}
+#get means
+avg_counts <- mapping_data %>% dplyr::select(reads,mapTo,bestHit,filtered) %>% colMeans() %>% as.data.frame()
+#in correct format
+avg_counts %<>% rownames_to_column("data") %>% rename(mean_count=".")
+```
+
+```{r}
+data_levels <- c("reads","mapTo","bestHit","filtered")
+ggplot(avg_counts,aes(x=factor(data,levels = data_levels),y=log(mean_count)))+
+  geom_point()
+```
+Which percentage is mapped, for the different depths?
+```{r}
+mapping_data %<>% mutate(perc_mapped=bestHit/reads*100)
+```
+
+```{r}
+ggplot(mapping_data,aes(y=perc_mapped,x=displacement))+
+  geom_point()+
+  geom_smooth(method = "loess")
+```
+Split by site:
+```{r}
+ggplot(mapping_data,aes(y=perc_mapped,x=displacement))+
+  geom_point()+
+  geom_smooth(method = "loess")+
+  facet_grid(~site_cat)
+```
