@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include=FALSE}
-packages <- c("dplyr","magrittr","stringr","tidyr","tibble","janitor","ggplot2","vegan","zCompositions","compositions","ggsignif")
+packages <- c("dplyr","magrittr","stringr","tidyr","tibble","janitor","ggplot2","vegan","zCompositions","compositions","ggsignif","circlize")
 for (package in packages){
   if (!require(package, character.only = TRUE)) install.packages(package)
   require(package, character.only = TRUE)
@@ -35,13 +35,13 @@ theme_set(theme_bw())
 
 ```{r}
 #list all files with count data
-filelist <- list.files(recursive = TRUE,pattern = "*rawCount.csv")
+filelist <- list.files(path="..",recursive = TRUE,pattern = "*rawCount.csv")
 #retrieve the names of the corresponding samples
-sample_names <- str_replace(filelist,"../bowtie/","") %>% str_replace("/.*","")
+sample_names <- str_replace(filelist,"bowtie/","") %>% str_replace("/.*","")
 #remove extension '_S0_L001'
 sample_names <- sub("_S0_L001","",sample_names)
 #read in all the count files (this creates a list of dataframes)
-files = lapply(filelist, read.csv)
+files = lapply(paste0("../",filelist), read.csv)
 #rename the dfs with the correct sample name
 names(files) <- sample_names
 
@@ -224,8 +224,6 @@ ggplot(genus_PCvar,aes(factor(PC,level=PC),variance,group=1))+
   geom_line()
 ```
 
-There is very little difference, but the species-based PCA seems to explain a bit more of the variance.
-
 Add metadata
 
 ```{r}
@@ -236,9 +234,11 @@ genus_PCs %<>% left_join(middendata,by=c("sample" = "long_id"))
 ```
 
 ```{r}
+layerlabels<-c("1"="Layer 1 (0-20 cm)","2"="Layer 2 (21-35 cm)","3"="Layer 3 (36-65 cm)","4"="Layer 4 (70+ cm)")
 ggplot(species_PCs,aes(PC1,PC2,colour=factor(group)))+
   geom_point()+
-  labs(x="PC1: 10.7% of variance",y="PC2: 6.2% of variance")
+  labs(x="PC1: 10.7% of variance",y="PC2: 6.2% of variance",colour="Soil layer")+
+  scale_colour_hue(labels=layerlabels)
 ```
 
 ```{r}
@@ -246,20 +246,33 @@ ggplot(species_PCs,aes(PC1,PC2,colour=site_cat))+
   geom_point()+
   labs(x="PC1: 10.7% of variance",y="PC2: 6.2% of variance")
 ```
+for saving
+```{r}
+ggsave("name.png",width=7.8,height = 4)
+```
 
 ```{r}
 ggplot(genus_PCs,aes(PC1,PC2,colour=factor(group)))+
   geom_point()+
-  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance")
+  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance",colour="Soil layer")+
+  scale_colour_hue(labels=layerlabels)
 ```
 
 ```{r}
+sitelabels<-c("Site 1 - S5","Site 2 - V23C","Site 3 - V24A")
 ggplot(genus_PCs,aes(PC1,PC2,colour=site_cat))+
   geom_point()+
-  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance")
+  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance",colour="Site")+
+  scale_colour_hue(labels=sitelabels)
 ```
 
 It seems the site is way more important than the depth for explaining the variance.
+
+```{r}
+ggplot(genus_PCs,aes(PC1,PC2,colour=soil_char))+
+  geom_point()+
+  labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance",colour="Metadata label")
+```
 
 Is sampling depth a confounding factor?
 
@@ -284,6 +297,157 @@ ggplot(genus_PCs,aes(PC1,PC2,colour=total_hits))+
   geom_point()+
   scale_color_continuous(type="viridis")+
   labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance")
+```
+
+Does it look different with just the raw counts, instead of clr values?
+```{r}
+genus_prcomp_count <- prcomp(genus_matrix_short)
+genus_PCs_count <- genus_prcomp_count$x %>% as.data.frame()
+genus_PCs_count %<>% rownames_to_column("sample")
+genus_PCs_count %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(genus_PCs_count,aes(PC1,PC2,colour=factor(group)))+
+  geom_point()+
+  #labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance",colour="Soil layer")+
+  scale_colour_hue(labels=layerlabels)
+```
+
+This does not work.
+
+### Select subgroups
+
+Plants
+
+```{r}
+plants <- total_data %>% filter(kingdom=="Viridiplantae") %>% dplyr::select(genus) %>% unique()
+plants <- plants$genus
+imputed_plantgenus_matrix <- imputed_genus_matrix %>% rownames_to_column("genus") %>% filter(genus %in% plants) %>% column_to_rownames("genus")
+```
+
+```{r}
+plantgenus_clr <- clr(t(imputed_plantgenus_matrix))
+```
+
+```{r}
+plantgenus_prcomp <- prcomp(plantgenus_clr)
+plantgenus_PCs <- plantgenus_prcomp$x %>% as.data.frame()
+```
+
+```{r}
+plantgenus_PCs %<>% rownames_to_column("sample")
+plantgenus_PCs %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(plantgenus_PCs,aes(PC1,PC2,colour=factor(group)))+
+  geom_point()+
+  labs(x="PC1: 8.3% of variance",y="PC2: 6.8% of variance")
+```
+```{r}
+plantgenus_PCvar <- data.frame("PC" = colnames(plantgenus_prcomp$x),
+                    "variance" = plantgenus_prcomp$sdev^2/sum(plantgenus_prcomp$sdev^2)*100)
+```
+
+Mammals 
+
+We don't have a family matrix yet
+
+```{r}
+#select family data
+family_data <- total_data %>% filter(family!="-" & !grepl(".",family,fixed = TRUE)) %>% dplyr::select(sample,count,family)
+#add together all counts per sample
+family_data %<>% group_by(sample,family) %>% summarise(count=sum(count))
+```
+Make matrix
+
+```{r}
+#transform data to form a matrix
+family_matrix <- family_data %>% spread(sample,count)
+family_matrix %<>% t() %>% row_to_names(row_number = 1)
+#convert NA to 0
+family_matrix %<>% replace(is.na(.),0)
+#strip whitespace
+family_matrix %<>% replace(is.character(.),str_trim(.))
+#convert from matrix to dataframe
+family_matrix %<>% as.data.frame() 
+#make columns numeric
+family_matrix %<>% mutate(across(.fns = as.numeric))
+
+```
+
+Discard genera that don't have <threshold> hits for any sample
+
+```{r}
+colMax <- function(data) lapply(data, max, na.rm = TRUE)
+family_matrix_short <- family_matrix %>% select_if(colMax(family_matrix) >= 20)
+```
+
+```{r}
+imputed_family_matrix <- cmultRepl(t(family_matrix_short),output = "p-counts")
+```
+
+```{r}
+mammals <- total_data %>% filter(class=="Mammalia") %>% dplyr::select(family) %>% unique()
+mammals <- mammals$family
+imputed_mammalfamily_matrix <- imputed_family_matrix %>% rownames_to_column("family") %>% filter(family %in% mammals) %>% column_to_rownames("family")
+```
+
+```{r}
+mammalfamily_clr <- clr(t(imputed_mammalfamily_matrix))
+```
+
+```{r}
+mammalfamily_prcomp <- prcomp(mammalfamily_clr)
+mammalfamily_PCs <- mammalfamily_prcomp$x %>% as.data.frame()
+```
+
+```{r}
+mammalfamily_PCs %<>% rownames_to_column("sample")
+mammalfamily_PCs %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(mammalfamily_PCs,aes(PC1,PC2,colour=factor(group)))+
+  geom_point()+
+  labs(x="PC1: 20.5% of variance",y="PC2: 12.0% of variance")
+```
+```{r}
+mammalfamily_PCvar <- data.frame("PC" = colnames(mammalfamily_prcomp$x),
+                    "variance" = mammalfamily_prcomp$sdev^2/sum(mammalfamily_prcomp$sdev^2)*100)
+```
+
+Insects
+
+```{r}
+insects <- total_data %>% filter(class=="Insecta") %>% dplyr::select(family) %>% unique()
+insects <- insects$family
+imputed_insectfamily_matrix <- imputed_family_matrix %>% rownames_to_column("family") %>% filter(family %in% insects) %>% column_to_rownames("family")
+```
+
+```{r}
+insectfamily_clr <- clr(t(imputed_insectfamily_matrix))
+```
+
+```{r}
+insectfamily_prcomp <- prcomp(insectfamily_clr)
+insectfamily_PCs <- insectfamily_prcomp$x %>% as.data.frame()
+```
+
+```{r}
+insectfamily_PCs %<>% rownames_to_column("sample")
+insectfamily_PCs %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(insectfamily_PCs,aes(PC1,PC2,colour=factor(group)))+
+  geom_point()+
+  labs(x="PC1: 20.5% of variance",y="PC2: 12.0% of variance")
+```
+```{r}
+insectfamily_PCvar <- data.frame("PC" = colnames(insectfamily_prcomp$x),
+                    "variance" = insectfamily_prcomp$sdev^2/sum(insectfamily_prcomp$sdev^2)*100)
 ```
 
 ### Part two: Diversity
@@ -374,8 +538,109 @@ ggplot(shannon,aes(factor(group),shannon))+
   geom_boxplot()+
   geom_point()
 ```
+### For subgroups
 
-### Different taxonomic levels
+```{r}
+plantgenus_matrix <- genus_matrix %>% dplyr::select(one_of(plants))
+```
+
+
+```{r}
+shannon_plantgenus <- diversity(plantgenus_matrix, "shannon")
+```
+
+```{r}
+shannon_plantgenus %<>% as.data.frame() 
+colnames(shannon_plantgenus) <- c("shannon")
+shannon_plantgenus %<>% rownames_to_column("sample")
+shannon_plantgenus %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(shannon_plantgenus,aes(site_cat,shannon))+
+  geom_boxplot()+
+  geom_point()+
+  labs(x="Site",y="Shannon index")+
+  scale_x_discrete(labels=sitelabels)+
+  theme(text=element_text(size=14))+
+  geom_signif(comparisons = list(c("S5","V24A")))
+```
+
+```{r}
+ggplot(shannon_plantgenus,aes(factor(group),shannon))+
+  geom_boxplot()+
+  geom_point()+
+  labs(x="Soil layer",y="Shannon index")+
+  scale_x_discrete(labels=layerlabels)+
+  theme(text=element_text(size=14))
+```
+
+```{r}
+mammalfamily_matrix <- family_matrix %>% dplyr::select(one_of(mammals))
+```
+
+
+```{r}
+shannon_mammalfamily <- diversity(mammalfamily_matrix, "shannon")
+```
+
+```{r}
+shannon_mammalfamily %<>% as.data.frame() 
+colnames(shannon_mammalfamily) <- c("shannon")
+shannon_mammalfamily %<>% rownames_to_column("sample")
+shannon_mammalfamily %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(shannon_mammalfamily,aes(site_cat,shannon))+
+  geom_boxplot()+
+  geom_point()+
+  labs(x="Site",y="Shannon index")+
+  scale_x_discrete(labels=sitelabels)+
+  theme(text=element_text(size=14))
+```
+
+```{r}
+ggplot(shannon_mammalfamily,aes(factor(group),shannon))+
+  geom_boxplot()+
+  geom_point()+
+  labs(x="Soil layer",y="Shannon index")+
+  scale_x_discrete(labels=layerlabels)+
+  theme(text=element_text(size=14))+
+  geom_signif(comparisons = list(c("2","4")))
+```
+
+Insects 
+
+```{r}
+insectfamily_matrix <- family_matrix %>% dplyr::select(one_of(insects))
+```
+
+
+```{r}
+shannon_insectfamily <- diversity(insectfamily_matrix, "shannon")
+```
+
+```{r}
+shannon_insectfamily %<>% as.data.frame() 
+colnames(shannon_insectfamily) <- c("shannon")
+shannon_insectfamily %<>% rownames_to_column("sample")
+shannon_insectfamily %<>% left_join(middendata,by=c("sample" = "long_id"))
+```
+
+```{r}
+ggplot(shannon_insectfamily,aes(site_cat,shannon))+
+  geom_boxplot()+
+  geom_point()
+```
+
+```{r}
+ggplot(shannon_insectfamily,aes(factor(group),shannon))+
+  geom_boxplot()+
+  geom_point()
+```
+
+### Heatmaps: Different taxonomic levels
 
 Superkingdom level
 
@@ -409,9 +674,12 @@ middendata_ordered <- middendata %>% arrange(site_cat,displacement)
 ```
 
 ```{r}
+set.seed(98)
 anno=rowAnnotation(depth=middendata$displacement)
 row_groups <- middendata$site_cat
-heatmap = Heatmap(skingdom_clr, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+col_fun = colorRamp2(c(-5,0,5), 
+    c("blue","white", "red"))
+heatmap = Heatmap(skingdom_clr, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun, name = "clr value",row_gap = unit(3, "mm"))
 draw(heatmap)
 ```
 Kingdoms of the Eukaryotes
@@ -456,6 +724,79 @@ And animals:
 top_animals <- total_data %>% filter(kingdom=="Metazoa") %>% group_by(species) %>% summarise(total_count=sum(count))
 ```
 
+
+```{r}
+top10_plants <- total_data %>% filter(kingdom=="Viridiplantae") %>% group_by(genus) %>% summarise(total_count=sum(count)) %>% arrange(desc(total_count)) %>% top_n(10)
+top10_plants <- top10_plants$genus
+genus_clr_top10plant <- genus_clr %>% as.data.frame() %>% dplyr::select(top10_plants)
+```
+
+```{r}
+set.seed(98)
+anno=rowAnnotation(depth=middendata$displacement)
+row_groups <- middendata$site_cat
+col_fun = colorRamp2(c(0,15), 
+    c("white", "red"))
+heatmap = Heatmap(genus_clr_top10plant, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun, name = "clr value",row_gap = unit(3, "mm"),heatmap_width = unit(23, "cm"), heatmap_height = unit(13, "cm"))
+draw(heatmap)
+```
+
+```{r}
+#select family data
+family_data <- total_data %>% filter(family!="-" & !grepl(".",family,fixed = TRUE)) %>% dplyr::select(sample,count,family)
+#add together all counts per sample
+family_data %<>% group_by(sample,family) %>% summarise(count=sum(count))
+```
+Make matrix
+
+```{r}
+#transform data to form a matrix
+family_matrix <- family_data %>% spread(sample,count)
+family_matrix %<>% t() %>% row_to_names(row_number = 1)
+#convert NA to 0
+family_matrix %<>% replace(is.na(.),0)
+#strip whitespace
+family_matrix %<>% replace(is.character(.),str_trim(.))
+#convert from matrix to dataframe
+family_matrix %<>% as.data.frame() 
+#make columns numeric
+family_matrix %<>% mutate(across(.fns = as.numeric))
+
+```
+
+Discard families that don't have <threshold> hits for any sample
+
+```{r}
+colMax <- function(data) lapply(data, max, na.rm = TRUE)
+family_matrix_short <- family_matrix %>% select_if(colMax(family_matrix) >= 20)
+```
+
+```{r}
+imputed_family_matrix <- cmultRepl(t(family_matrix_short),output = "p-counts")
+```
+```{r}
+family_clr <- clr(t(imputed_family_matrix))
+```
+
+```{r}
+top10_mammals <- total_data %>% filter(class=="Mammalia") %>% group_by(family) %>% summarise(total_count=sum(count)) %>% arrange(desc(total_count)) %>% top_n(10)
+top10_mammals <- top10_mammals$family
+family_clr_top10mammal <- family_clr %>% as.data.frame() %>% dplyr::select(top10_mammals)
+```
+
+```{r}
+set.seed(98)
+anno=rowAnnotation(depth=middendata$displacement)
+row_groups <- middendata$site_cat
+col_fun = colorRamp2(c(-10,0,10), 
+    c("blue","white", "red"))
+
+heatmap = Heatmap(family_clr_top10mammal, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun,name = "clr value",row_gap = unit(3, "mm"),heatmap_width = unit(23, "cm"), heatmap_height = unit(13, "cm"))
+draw(heatmap)
+```
+
+
+
 Grains:
 - Triticum aestivum (wheat)
 - Hordeum vulgare (barley)
@@ -472,6 +813,13 @@ Interesting animals:
 - Cervus elaphus (red deer)
 - Felis catus (cat)
 
+```{r}
+anno=rowAnnotation(depth=middendata$displacement)
+row_groups <- middendata$site_cat
+heatmap = Heatmap(kingdom_clr, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+draw(heatmap)
+```
+
 The animal hits are shit (not enough species in database).
 
 ```{r}
@@ -481,7 +829,9 @@ species_clr_selection1 <- species_clr %>% as.data.frame %>% dplyr::select(`Homo 
 ```{r}
 anno=rowAnnotation(depth=middendata$displacement)
 row_groups <- middendata$site_cat
-heatmap = Heatmap(species_clr_selection1, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+col_fun = colorRamp2(c(-10,0,10), 
+    c("blue","white", "red"))
+heatmap = Heatmap(species_clr_selection1, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45)
 draw(heatmap)
 ```
 
@@ -499,18 +849,21 @@ species_clr_selection2 <- species_clr %>% as.data.frame %>% dplyr::select(`Bruce
 ```{r}
 anno=rowAnnotation(depth=middendata$displacement)
 row_groups <- middendata$site_cat
-heatmap = Heatmap(species_clr_selection2, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+heatmap = Heatmap(species_clr_selection2, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun)
 draw(heatmap)
 ```
 
 ```{r}
-genus_clr_selection2 <- genus_clr %>% as.data.frame %>% dplyr::select(`Homo`,`Brucella`,`Sus`,`Bos`,`Ovis`,`Salmonella`,`Yersinia`,`Burkholderia`,`Clostridium`,`Listeria`,`Mycobacterium`,`Shigella`,`Coccidioides`)
+genus_clr_selection2 <- genus_clr %>% as.data.frame %>% dplyr::select(`Brucella`,`Salmonella`,`Yersinia`,`Burkholderia`,`Clostridium`,`Listeria`,`Mycobacterium`,`Shigella`,`Coccidioides`,`Escherichia`)
 ```
 
 ```{r}
-anno=rowAnnotation(depth=middendata$displacement)
+set.seed(98)
 row_groups <- middendata$site_cat
-heatmap = Heatmap(genus_clr_selection2, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups)
+col_fun = colorRamp2(c(-15,0,15), 
+    c("blue","white", "red"))
+anno=rowAnnotation(depth=middendata$displacement)
+heatmap = Heatmap(genus_clr_selection2, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun, name = "clr value",row_gap = unit(3, "mm"),heatmap_width = unit(23, "cm"), heatmap_height = unit(13, "cm"))
 draw(heatmap)
 ```
 
@@ -535,6 +888,7 @@ otu_table <- phyloseq::otu_table(otu_data,taxa_are_rows=FALSE)
 Get sample metadata
 ```{r}
 sample_data <- phyloseq::sample_data(middendata %>% column_to_rownames("long_id"))
+#sample_data$group = factor(sample_data$group, levels = c(3,1,2,4))
 ```
 
 Combine into phyloseq object
@@ -612,15 +966,51 @@ ggplot(diff_taxa_depth,aes(y=log_foldchange,x=factor(species,levels = species_or
   geom_bar(stat = "identity")+
   #geom_errorbar(aes(ymin=log_foldchange-se,ymax=log_foldchange+se))+
   theme(axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
+        axis.ticks.x=element_blank())+
+  scale_fill_manual(values=c("#3d9aca","#e76a88","#d05034","#efc543","#c162be","#ea8343","#5c65da","#55c358"))
 ```
 
+Compare midden vs non-midden (based on depth 36-65 cm).
+```{r}
+#add midden column to metadata
+middendata %<>% mutate(midden=ifelse(group==2,"yes","no"))
+sample_data <- phyloseq::sample_data(middendata %>% column_to_rownames("long_id"))
+pseq=phyloseq(otu_table,tax_table,sample_data)
+```
 
+```{r}
+ancombc_midden = ancombc(phyloseq = pseq, formula = "midden", zero_cut = 1.1)
+```
 
-Run ancombc, between groups of soil layers:
+get differentially abundant taxa:
+
+```{r}
+diff_taxa_midden <- ancombc_midden$res$diff_abn %>% filter(middenyes==TRUE) %>% rownames_to_column("species") %>% dplyr::select(species)
+```
+
+combine with fold change, standard error and taxonomy info:
+```{r}
+diff_taxa_midden %<>% left_join(ancombc_midden$res$beta %>% dplyr::select(middenyes) %>% rownames_to_column("species")) %>% rename("log_foldchange"=middenyes)
+diff_taxa_midden %<>% left_join(ancombc_midden$res$se %>% dplyr::select(middenyes) %>% rownames_to_column("species")) %>% rename("se"=middenyes)
+diff_taxa_midden %<>% left_join(tax_data %>% rownames_to_column("species"))
+#change signs of the beta values (to have the midden group instead of the no-midden group as reference)
+diff_taxa_midden %<>% mutate(log_foldchange= -(log_foldchange))
+```
+
+Compare group 3 (midden), to the other groups:
 
 ```{r}
 ancombc_depth_group = ancombc(phyloseq = pseq, formula = "group", zero_cut = 1.1, group = "group", struc_zero = TRUE)
 ```
 
+Which species are different in the midden group, compared to all others?
 
+```{r}
+diff_taxa_dgroup <- ancombc_depth_group$res$diff_abn %>% filter(group1==TRUE & group2==TRUE & group4==TRUE) %>% rownames_to_column("species") %>% dplyr::select(species) 
+```
+
+combine with fold change, standard error and taxonomy info:
+```{r}
+diff_taxa_dgroup %<>% left_join(ancombc_depth_group$res$beta %>% rownames_to_column("species"))
+diff_taxa_dgroup %<>% left_join(tax_data %>% rownames_to_column("species"))
+```
