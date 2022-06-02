@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include=FALSE}
-packages <- c("dplyr","magrittr","stringr","tidyr","tibble","janitor","ggplot2","vegan","zCompositions","compositions","ggsignif","circlize")
+packages <- c("dplyr","magrittr","stringr","tidyr","tibble","janitor","ggplot2","vegan","zCompositions","compositions","ggsignif","circlize","splines")
 for (package in packages){
   if (!require(package, character.only = TRUE)) install.packages(package)
   require(package, character.only = TRUE)
@@ -259,11 +259,12 @@ ggplot(genus_PCs,aes(PC1,PC2,colour=factor(group)))+
 ```
 
 ```{r}
-sitelabels<-c("Site 1 - S5","Site 2 - V23C","Site 3 - V24A")
+sitelabels<-c("Site 1","Site 2","Site 3")
+siteorder<-c("V24A","V23C","S5")
 ggplot(genus_PCs,aes(PC1,PC2,colour=site_cat))+
   geom_point()+
   labs(x="PC1: 11.3% of variance",y="PC2: 5.8% of variance",colour="Site")+
-  scale_colour_hue(labels=sitelabels)
+  scale_colour_hue(breaks=siteorder,labels=sitelabels)
 ```
 
 It seems the site is way more important than the depth for explaining the variance.
@@ -341,7 +342,7 @@ plantgenus_PCs %<>% left_join(middendata,by=c("sample" = "long_id"))
 ```
 
 ```{r}
-ggplot(plantgenus_PCs,aes(PC1,PC2,colour=factor(group)))+
+ggplot(plantgenus_PCs,aes(PC1,PC2,colour=site_cat))+
   geom_point()+
   labs(x="PC1: 8.3% of variance",y="PC2: 6.8% of variance")
 ```
@@ -409,7 +410,7 @@ mammalfamily_PCs %<>% left_join(middendata,by=c("sample" = "long_id"))
 ```
 
 ```{r}
-ggplot(mammalfamily_PCs,aes(PC1,PC2,colour=factor(group)))+
+ggplot(mammalfamily_PCs,aes(PC1,PC2,colour=site_cat))+
   geom_point()+
   labs(x="PC1: 20.5% of variance",y="PC2: 12.0% of variance")
 ```
@@ -730,14 +731,17 @@ top10_plants <- total_data %>% filter(kingdom=="Viridiplantae") %>% group_by(gen
 top10_plants <- top10_plants$genus
 genus_clr_top10plant <- genus_clr %>% as.data.frame() %>% dplyr::select(top10_plants)
 ```
+```{r}
+species_clr_selected <- species_clr %>% as.data.frame %>% dplyr::select(`Triticum aestivum`,`Hordeum vulgare`,`Secale cereale`,`Avena sativa`)
+```
 
 ```{r}
 set.seed(98)
 anno=rowAnnotation(depth=middendata$displacement)
 row_groups <- middendata$site_cat
-col_fun = colorRamp2(c(0,15), 
-    c("white", "red"))
-heatmap = Heatmap(genus_clr_top10plant, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun, name = "clr value",row_gap = unit(3, "mm"),heatmap_width = unit(23, "cm"), heatmap_height = unit(13, "cm"))
+col_fun = colorRamp2(c(-5,0,10), 
+    c("blue","white", "red"))
+heatmap = Heatmap(species_clr_selected, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun, name = "clr value",row_gap = unit(3, "mm"))#,heatmap_width = unit(23, "cm"), heatmap_height = unit(13, "cm"))
 draw(heatmap)
 ```
 
@@ -782,6 +786,13 @@ family_clr <- clr(t(imputed_family_matrix))
 top10_mammals <- total_data %>% filter(class=="Mammalia") %>% group_by(family) %>% summarise(total_count=sum(count)) %>% arrange(desc(total_count)) %>% top_n(10)
 top10_mammals <- top10_mammals$family
 family_clr_top10mammal <- family_clr %>% as.data.frame() %>% dplyr::select(top10_mammals)
+top10_animals <- total_data %>% filter(kingdom=="Metazoa") %>% group_by(family) %>% summarise(total_count=sum(count)) %>% arrange(desc(total_count)) %>% top_n(10)
+top20_animals_non_primate <- total_data %>% filter(kingdom=="Metazoa" & order!="Primates") %>% group_by(family) %>% summarise(total_count=sum(count)) %>% arrange(desc(total_count)) %>% top_n(20)
+#top10_animals <- top10_animals$family
+```
+
+```{r}
+family_clr_selected <- family_clr %>% as.data.frame %>% dplyr::select(`Bovidae`,`Suidae`,`Cervidae`,`Physeteridae`,`Lipotidae`,`Hominidae`,`Pectinidae`,`Salmonidae`,`Anatidae`,`Phasianidae`)
 ```
 
 ```{r}
@@ -791,10 +802,26 @@ row_groups <- middendata$site_cat
 col_fun = colorRamp2(c(-10,0,10), 
     c("blue","white", "red"))
 
-heatmap = Heatmap(family_clr_top10mammal, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun,name = "clr value",row_gap = unit(3, "mm"),heatmap_width = unit(23, "cm"), heatmap_height = unit(13, "cm"))
+heatmap = Heatmap(family_clr_selected, right_annotation = anno, show_row_names = FALSE, row_order = middendata_ordered$long_id, row_split = row_groups, column_names_rot = 45, col = col_fun,name = "clr value",row_gap = unit(3, "mm"))#heatmap_width = unit(23, "cm"), heatmap_height = unit(13, "cm"))
 draw(heatmap)
 ```
 
+
+It is not technically correct to use clr values for linear regression (you should use ilr or balances, but these methods are quite complicated).
+I am aware that using clr values introduces a negative bias, because of the compositional nature of the data (as one species goes up, the total of all other species goes down)
+In this case, because we see positive correlations despite this bias, we can assume that they are correct.
+```{r}
+ggplot(family_clr_selected,aes(x=Lipotidae,y=Physeteridae))+
+  geom_point()
+```
+
+If they are both zero, this results in a correlation, because in each sample the relationship between their clr values is the same.
+
+
+```{r}
+hom_sui.lm = lm(Physeteridae ~ Lipotidae, data = family_clr)
+summary(hom_sui.lm)
+```
 
 
 Grains:
@@ -1013,4 +1040,234 @@ combine with fold change, standard error and taxonomy info:
 ```{r}
 diff_taxa_dgroup %<>% left_join(ancombc_depth_group$res$beta %>% rownames_to_column("species"))
 diff_taxa_dgroup %<>% left_join(tax_data %>% rownames_to_column("species"))
+```
+
+
+### Look at subsistence animals
+
+Select only animals that are interesting from a subsistence perspective, and label using their common name
+```{r}
+food_data <- total_data %>% filter(species %in% c("Canis lupus","Sus scrofa","Physeter catodon","Triticum aestivum","Hordeum vulgare","Secale cereale","Avena sativa") | genus %in% c("Bos","Ovis","Ursus") | family %in% c("Cervidae","Phocidae") | class %in% c("Actinopteri","Bivalvia"))
+food_data %<>% mutate(label=ifelse(species=="Canis lupus","Dog/wolf","-"))
+food_data %<>% mutate(label=ifelse(species=="Sus scrofa","Pig",label))
+food_data %<>% mutate(label=ifelse(species=="Physeter catodon","Sperm whale",label))
+food_data %<>% mutate(label=ifelse(genus=="Bos","Cattle",label))
+food_data %<>% mutate(label=ifelse(genus=="Ovis","Sheep",label))
+food_data %<>% mutate(label=ifelse(genus=="Ursus","Bear",label))
+food_data %<>% mutate(label=ifelse(family=="Cervidae","Reindeer",label))
+food_data %<>% mutate(label=ifelse(class=="Bivalvia","Shell",label))
+food_data %<>% mutate(label=ifelse(class=="Actinopteri","Fish",label))
+#food_data %<>% mutate(label=ifelse(family=="Lipotidae","Dolphin",label))
+food_data %<>% mutate(label=ifelse(family=="Phocidae","Seal",label))
+##plants
+food_data %<>% mutate(label=ifelse(species=="Triticum aestivum","Wheat",label))
+food_data %<>% mutate(label=ifelse(species=="Hordeum vulgare","Barley",label))
+food_data %<>% mutate(label=ifelse(species=="Secale cereale","Rye",label))
+food_data %<>% mutate(label=ifelse(species=="Avena sativa","Oat",label))
+```
+
+Add metadata
+```{r}
+food_data %<>% left_join(middendata,by = c("sample"="long_id")) 
+food_data %<>% mutate(foodtype=ifelse(!label %in% c("Shell","Fish"),"Mammal",label)) 
+food_data %<>% mutate(foodtype=ifelse(label %in% c("Wheat","Barley","Rye","Oat"),"Cereal",foodtype))
+```
+
+Add readcounts and calculate ppm
+```{r}
+reads_sample <- readcount %>% dplyr::select(sample,reads) %>% filter(grepl("trim",sample))
+reads_sample %<>% mutate(sample=sub("_S0_.*","",sample)) %>% group_by(sample) %>% mutate(reads=sum(reads)) %>% ungroup() %>% unique()
+food_data %<>% left_join(reads_sample)
+#calculate ppm (we have the fragment counts, so x2 for the forward and reverse reads)
+food_data %<>% mutate(ppm=count/reads*2000000)
+```
+
+View per site
+```{r}
+food_site <- food_data %>% group_by(site_cat,foodtype) %>% summarise(count=sum(count),sum_ppm=sum(ppm))
+mammal_site <- food_data %>% filter(!foodtype %in% c("Shell","Fish","Cereal")) %>% group_by(site_cat,label) %>% summarise(count=sum(count),sum_ppm=sum(ppm))
+cereal_site <- food_data %>% filter(foodtype =="Cereal") %>% group_by(site_cat,label) %>% summarise(count=sum(count),sum_ppm=sum(ppm))
+```
+
+```{r}
+sitelabels<-c("Site 1","Site 2","Site 3")
+siteorder<-c("V24A","V23C","S5")
+foodtype_order <- c("Fish","Shell","Mammal","Cereal")
+foodtype_colours <-c("#6799b5","#b3d1d8","#ed9092","#f7e04f") 
+ggplot(food_site,aes(x=sum_ppm,y=site_cat,fill=factor(foodtype,levels = rev(foodtype_order))))+
+  geom_bar(stat="identity",position = "fill")+
+  scale_fill_manual(breaks=foodtype_order,values=foodtype_colours)+
+  labs(x="Relative count",y="Site",fill="Food source type")+
+  scale_y_discrete(breaks=siteorder,labels=sitelabels)
+```
+
+```{r}
+mammal_order <- c("Pig","Sheep","Cattle","Reindeer","Dog/wolf","Bear","Seal","Sperm whale")
+mammal_colours <- c("#dda49b","#88cc5d","#158404","#8e553d","#ceb063","#bc653c","#4a98a5","#4a6aa5")
+ggplot(mammal_site,aes(x=sum_ppm,y=site_cat,fill=factor(label,levels = rev(mammal_order))))+
+  geom_bar(stat="identity",position = "fill")+
+  scale_fill_manual(breaks = mammal_order,values=mammal_colours)+
+  scale_y_discrete(breaks=siteorder,labels=sitelabels)
+```
+
+```{r}
+plant_order <- c("Wheat","Barley","Rye","Oat")
+plant_colours <-c("#efd356","#eddfa8","#724c33","#6da7c6") 
+ggplot(cereal_site,aes(x=sum_ppm,y=site_cat,fill=factor(label,levels = rev(plant_order))))+
+  geom_bar(stat="identity",position = "fill")+
+  scale_fill_manual(breaks=plant_order,values=plant_colours)+
+  labs(x="Relative count",y="Site",fill="Food source type")+
+  scale_y_discrete(breaks=siteorder,labels=sitelabels)
+```
+
+```{r}
+food_data$label <- as.factor(food_data$label)
+food_data$foodtype <- as.factor(food_data$foodtype)
+food_displacement <- food_data %>% group_by(site_cat,sample,displacement,foodtype) %>% summarise(ppm=sum(ppm))  
+#merge datapoints 41 with 40 cm, and 44 + 46 in a 45 cm category (for better visualisation)
+food_displacement %<>% mutate(displacement=ifelse(displacement==41,40,displacement))
+food_displacement %<>% mutate(displacement=ifelse(displacement %in% c(44,46),45,displacement))
+food_zeroes <- food_data %>% mutate(displacement=ifelse(displacement==41,40,displacement)) %>% mutate(displacement=ifelse(displacement %in% c(44,46),45,displacement)) %>% group_by(site_cat,sample,displacement,foodtype) %>% count(foodtype,.drop=FALSE) %>% filter(n==0) %>% mutate(ppm=0) %>% dplyr::select(-n)
+food_displacement %<>% rbind(food_zeroes) %>% group_by(site_cat,displacement,foodtype) %>% summarise(ppm=mean(ppm))
+food_displacement %<>% group_by(site_cat,foodtype) %>% mutate(total_ppm=sum(ppm)) %>% mutate(relative_ppm=ppm/total_ppm)
+
+mammal_displacement <- food_data %>% group_by(site_cat,sample,displacement,label) %>% summarise(ppm=sum(ppm)) 
+mammal_zeroes <- food_data %>% group_by(site_cat,sample,displacement,label) %>% count(label,.drop=FALSE) %>% filter(n==0) %>% mutate(ppm=0) %>% dplyr::select(-n)
+mammal_displacement %<>% rbind(mammal_zeroes)  %>% group_by(site_cat,displacement,label) %>% summarise(ppm=mean(ppm))
+mammal_displacement %<>% group_by(site_cat,label) %>% mutate(total_ppm=sum(ppm)) %>% mutate(relative_ppm=ppm/total_ppm) %>% filter(!label %in% c("Shell","Fish")) %>% mutate(relative_ppm=ifelse(relative_ppm=="NaN",0,relative_ppm))
+```
+```{r}
+food_displacement$site_cat <- factor(food_displacement$site_cat,levels = siteorder)
+names(sitelabels)<-c("V24A","V23C","S5")
+ggplot(food_displacement,aes(y=relative_ppm,x=displacement,color=foodtype))+
+  geom_point()+
+  geom_line(size=1)+
+  #geom_smooth(orientation = "y",se=FALSE,method = "glm",formula = y ~ ns(x, 4))+
+  scale_color_manual(breaks=foodtype_order,values=foodtype_colours)+
+  facet_grid(~site_cat,labeller = labeller(site_cat=sitelabels))
+```
+```{r}
+ggplot(mammal_displacement,aes(x=relative_ppm,y=displacement,color=label))+
+  geom_point()+
+  geom_line(orientation = "y")+
+  #geom_smooth(orientation = "y",se=FALSE,method = "glm",formula = y ~ ns(x, 4))+
+  scale_y_reverse(limits=c(75,0))+
+  scale_color_manual(breaks = mammal_order,values=mammal_colours)+
+  facet_grid(~site_cat)
+```
+
+
+### Plants for subsistence
+
+```{r}
+plant_data <- total_data %>% filter(species %in% c("Triticum aestivum","Hordeum vulgare","Secale cereale","Avena sativa"))
+plant_data %<>% mutate(label=ifelse(species=="Triticum aestivum","Wheat","-"))
+plant_data %<>% mutate(label=ifelse(species=="Hordeum vulgare","Barley",label))
+plant_data %<>% mutate(label=ifelse(species=="Secale cereale","Rye",label))
+plant_data %<>% mutate(label=ifelse(species=="Avena sativa","Oat",label))
+```
+
+Add metadata
+```{r}
+plant_data %<>% left_join(middendata,by = c("sample"="long_id"))
+```
+
+Add readcounts and calculate ppm
+```{r}
+plant_data %<>% left_join(reads_sample)
+#calculate ppm (we have the fragment counts, so x2 for the forward and reverse reads)
+plant_data %<>% mutate(ppm=count/reads*2000000)
+```
+
+View per site
+```{r}
+plant_site <- plant_data %>% group_by(site_cat,label) %>% summarise(count=sum(count),sum_ppm=sum(ppm))
+```
+
+```{r}
+plant_order <- c("Wheat","Barley","Rye","Oat")
+plant_colours <-c("#efd356","#eddfa8","#724c33","#6da7c6") 
+ggplot(plant_site,aes(x=sum_ppm,y=site_cat,fill=factor(label,levels = rev(plant_order))))+
+  geom_bar(stat="identity",position = "fill")+
+  scale_fill_manual(breaks=plant_order,values=plant_colours)+
+  labs(x="Relative count",y="Site",fill="Food source type")
+```
+
+```{r}
+plant_data$label <- as.factor(plant_data$label)
+plant_displacement <- plant_data %>% group_by(site_cat,sample,displacement,label) %>% summarise(ppm=sum(ppm))  
+plant_zeroes <- plant_data %>% group_by(site_cat,sample,displacement,label) %>% count(label,.drop=FALSE) %>% filter(n==0) %>% mutate(ppm=0) %>% dplyr::select(-n)
+plant_displacement %<>% rbind(plant_zeroes) %>% group_by(site_cat,displacement,label) %>% summarise(ppm=mean(ppm))
+plant_displacement %<>% group_by(site_cat,label) %>% mutate(total_ppm=sum(ppm)) %>% mutate(relative_ppm=ppm/total_ppm)
+
+```
+
+
+```{r}
+ggplot(plant_displacement,aes(x=relative_ppm,y=displacement,color=label))+
+  geom_point()+
+  geom_line(orientation = "y")+
+  #geom_smooth(orientation = "y",se=FALSE,method = "glm",formula = y ~ ns(x, 4))+
+  scale_y_reverse(limits=c(75,0))+
+  scale_color_manual(breaks=plant_order,values=plant_colours)+
+  facet_grid(~site_cat)
+```
+
+### Pathogens
+
+```{r}
+pathogen_data <- total_data %>% filter(species %in% c("Yersinia pestis","Burkholderia pseudomallei","Bacillus anthracis","Clostridium tetani","Clostridium botulinum","Listeria monocytogenes","Francisella tularensis","Mycobacterium leprae","Salmonella enterica","Escherichia coli","Blastomyces dermatitidis","Histoplasma capsulatum","Sporothrix schenckii","Exserohilum rostratum") | genus %in% c("Shigella","Campylobacter","Legionella","Coccidioides"))
+pathogen_data %<>% mutate(label=ifelse(genus %in% c("Shigella","Campylobacter","Legionella","Coccidioides"),genus,species))
+```
+
+Select only top 10
+```{r}
+top10pathogens <- pathogen_data %>% group_by(label) %>% summarise(count=sum(count)) %>% arrange(desc(count)) %>% top_n(10)
+pathogen_data %<>% filter(label %in% top10pathogens$label)
+```
+
+Add metadata
+```{r}
+pathogen_data %<>% left_join(middendata,by = c("sample"="long_id"))
+```
+
+Add readcounts and calculate ppm
+```{r}
+pathogen_data %<>% left_join(reads_sample)
+#calculate ppm (we have the fragment counts, so x2 for the forward and reverse reads)
+pathogen_data %<>% mutate(ppm=count/reads*2000000)
+```
+
+View per site
+```{r}
+pathogen_site <- pathogen_data %>% group_by(site_cat,label) %>% summarise(count=sum(count),sum_ppm=sum(ppm))
+```
+
+```{r}
+pathogen_order <- c("Escherichia coli","Salmonella enterica","Legionella","Burkholderia pseudomallei","Clostridium botulinum","Shigella","Yersinia pestis","Blastomyces dermatitidis","Sporothrix schenckii","Coccidioides")
+pathogen_colours <-c("#c5d9ea","#eade56","#796fa5","#54af5c","#dd7133","#7bd861","#c44438","#e084b2","#5fabb7","#5d58b5") 
+ggplot(pathogen_site,aes(x=sum_ppm,y=site_cat,fill=factor(label,levels = rev(pathogen_order))))+
+  geom_bar(stat="identity",position = "fill")+
+  scale_fill_manual(breaks=pathogen_order,values=pathogen_colours)+
+  labs(x="Relative count",y="Site",fill="Pathogen")
+```
+
+```{r}
+pathogen_data$label <- as.factor(pathogen_data$label)
+pathogen_displacement <- pathogen_data %>% group_by(site_cat,sample,displacement,label) %>% summarise(ppm=sum(ppm))  
+pathogen_zeroes <- pathogen_data %>% group_by(site_cat,sample,displacement,label) %>% count(label,.drop=FALSE) %>% filter(n==0) %>% mutate(ppm=0) %>% dplyr::select(-n)
+pathogen_displacement %<>% rbind(pathogen_zeroes) %>% group_by(site_cat,displacement,label) %>% summarise(ppm=mean(ppm))
+pathogen_displacement %<>% group_by(site_cat,label) %>% mutate(total_ppm=sum(ppm)) %>% mutate(relative_ppm=ppm/total_ppm)
+
+```
+
+
+```{r}
+ggplot(pathogen_displacement,aes(x=relative_ppm,y=displacement,color=label))+
+  geom_point()+
+  geom_line(orientation = "y")+
+  #geom_smooth(orientation = "y",se=FALSE)+
+  scale_y_reverse(limits=c(75,0))+
+  scale_color_manual(breaks=pathogen_order,values=pathogen_colours)+
+  facet_grid(~site_cat)
 ```
