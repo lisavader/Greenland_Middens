@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r, include=FALSE}
-packages <- c("dplyr","magrittr","stringr")
+packages <- c("dplyr","magrittr","stringr","ggplot2")
 for (package in packages){
   if (!require(package, character.only = TRUE)) install.packages(package)
   require(package, character.only = TRUE)
@@ -80,6 +80,15 @@ ggplot(mapping_data,aes(y=perc_mapped,x=displacement))+
   geom_point()+
   geom_smooth(method = "loess")
 ```
+```{r}
+mapping_data %<>% full_join(skingdom_data %>% filter(superkingdom=="Bacteria") %>% dplyr::select(!superkingdom)) %>% rename(bac_count=count) %>% mutate(perc_bac=bac_count/filtered*100)
+```
+```{r}
+ggplot(mapping_data,aes(y=perc_mapped,x=perc_bac))+
+  geom_point()+
+  geom_smooth(method = "lm")
+```
+
 Split by site:
 ```{r}
 ggplot(mapping_data,aes(y=perc_mapped,x=displacement))+
